@@ -12,7 +12,6 @@ namespace FreedomLineBot
 
         protected override async Task OnMessageAsync(MessageEvent ev)
         {
-            if(ev.Source.Id==Environment.GetEnvironmentVariable("GROUP_ID"))
             switch (ev.Message.Type)
             {
                 case EventMessageType.Text:
