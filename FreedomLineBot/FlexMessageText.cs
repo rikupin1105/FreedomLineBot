@@ -217,5 +217,98 @@
   },
   ""altText"": ""Rules""
 }";
+
+        public static string FlexJsonFAQsWithCat =
+@"{
+  ""type"": ""flex"",
+  ""contents"": {
+    ""type"": ""bubble"",
+    ""body"": {
+      ""type"": ""box"",
+      ""layout"": ""vertical"",
+      ""contents"": [
+        {
+          ""type"": ""box"",
+          ""layout"": ""baseline"",
+          ""contents"": [
+            {
+              ""type"": ""text"",
+              ""text"": ""いま一度FAQを確認してくださいにゃ"",
+              ""flex"": 5,
+              ""size"": ""md"",
+              ""wrap"": true
+            }
+          ],
+          ""spacing"": ""sm""
+        }
+      ]
+    },
+    ""footer"": {
+      ""type"": ""box"",
+      ""layout"": ""vertical"",
+      ""contents"": [
+{
+          ""type"": ""button"",
+          ""action"": {
+            ""type"": ""uri"",
+            ""label"": ""FAQを見る"",
+            ""uri"":""https://freedom-site.netlify.app/FAQs""
+          },
+          ""height"": ""sm"",
+          ""style"": ""secondary""
+        }
+      ],
+      ""flex"": 0,
+      ""spacing"": ""sm""
+    }
+  },
+  ""altText"": ""FAQ""
+}";
+        public static string FlexJsonRulesWithCat =
+@"{
+  ""type"": ""flex"",
+  ""contents"": {
+    ""type"": ""bubble"",
+    ""body"": {
+      ""type"": ""box"",
+      ""layout"": ""vertical"",
+      ""contents"": [
+        {
+          ""type"": ""box"",
+          ""layout"": ""baseline"",
+          ""contents"": [
+            {
+              ""type"": ""text"",
+              ""text"": ""いま一度ルールを確認してくださいにゃ"",
+              ""flex"": 5,
+              ""size"": ""md"",
+              ""wrap"": true
+            }
+          ],
+          ""spacing"": ""sm""
+        }
+      ]
+    },
+    ""footer"": {
+      ""type"": ""box"",
+      ""layout"": ""vertical"",
+      ""contents"": [
+{
+          ""type"": ""button"",
+          ""action"": {
+            ""type"": ""uri"",
+            ""label"": ""ルールを見る"",
+            ""uri"":""https://freedom-site.netlify.app/Rules""
+          },
+          ""height"": ""sm"",
+          ""style"": ""secondary""
+        }
+      ],
+      ""flex"": 0,
+      ""spacing"": ""sm""
+    }
+  },
+  ""altText"": ""Rules""
+}";
     }
 }
