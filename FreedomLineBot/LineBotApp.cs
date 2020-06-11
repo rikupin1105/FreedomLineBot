@@ -48,9 +48,17 @@ namespace FreedomLineBot
             {
                 await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonRules);
             }
+            if (msg.Text == "ルールにゃ")
+            {
+                await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonRulesWithCat);
+            }
             if (msg.Text == "FAQ")
             {
                 await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonFAQs);
+            }
+            if (msg.Text == "FAQにゃ")
+            {
+                await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonFAQsWithCat);
             }
             if (msg.Text == "継続希望")
             {
