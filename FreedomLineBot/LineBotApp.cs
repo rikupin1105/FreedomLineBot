@@ -44,29 +44,35 @@ namespace FreedomLineBot
         {
             if (!(ev.Message is TextEventMessage msg)) { return; }
 
-            if (msg.Text == "ルール")
+            if (msg.Text.Contains("にゃ") && msg.Text != "ルールにゃ" && msg.Text != "FAQにゃ")
+            {
+                var rand = new Random();
+                var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)?", "ฅ(=✧ω✧=)ฅﾆｬﾆｬｰﾝ✧", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん" };
+                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, catword[rand.Next(0,catword.Length)]);
+            }
+            else if (msg.Text == "ルール")
             {
                 await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonRules);
             }
-            if (msg.Text == "ルールにゃ")
+            else if (msg.Text == "ルールにゃ")
             {
                 await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonRulesWithCat);
             }
-            if (msg.Text == "FAQ")
+            else if (msg.Text == "FAQ")
             {
                 await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonFAQs);
             }
-            if (msg.Text == "FAQにゃ")
+            else if (msg.Text == "FAQにゃ")
             {
                 await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonFAQsWithCat);
             }
-            if (msg.Text == "継続希望")
+            else if (msg.Text == "継続希望")
             {
                 GAS.Continue(ev.Source.UserId);
                 var User_Name = lineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Source.UserId).Result.DisplayName;
                 await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, User_Name + "さん 継続希望確認しました。");
             }
-            if (msg.Text == "継続確認イベント")
+            else if (msg.Text == "継続確認イベント")
             {
                 var admin_users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
                 foreach (string admin_user in admin_users)
