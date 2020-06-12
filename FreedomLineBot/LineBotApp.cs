@@ -1,6 +1,7 @@
 ﻿using Line.Messaging;
 using Line.Messaging.Webhooks;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FreedomLineBot
@@ -44,13 +45,7 @@ namespace FreedomLineBot
         {
             if (!(ev.Message is TextEventMessage msg)) { return; }
 
-            if (msg.Text.Contains("にゃ") && msg.Text != "ルールにゃ" && msg.Text != "FAQにゃ")
-            {
-                var rand = new Random();
-                var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)?", "ฅ(=✧ω✧=)ฅﾆｬﾆｬｰﾝ✧", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん" };
-                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, catword[rand.Next(0,catword.Length)]);
-            }
-            else if (msg.Text == "ルール")
+            if (msg.Text == "ルール")
             {
                 await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonRules);
             }
@@ -82,6 +77,37 @@ namespace FreedomLineBot
                         await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonCheckContinue);
                         break;
                     }
+                }
+            }
+            else
+            {
+                var animalMessageList = new List<string>();
+                if (msg.Text.Contains("にゃ") || msg.Text.Contains("ニャ"))
+                {
+                    var rand = new Random();
+                    var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)?", "ฅ(=✧ω✧=)ฅﾆｬﾆｬｰﾝ✧", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん", "ฅ(๑•̀ω•́๑)ฅﾆｬﾝﾆｬﾝｶﾞｵｰ", "ﾐｬｰ♪ヽ(∇⌒= )( =⌒∇)ﾉﾐｬｰ♪", "=^∇^*=　にゃお～ん♪" };
+
+                    animalMessageList.Add(catword[rand.Next(0, catword.Length)]);
+                }
+                if (msg.Text.Contains("わん") || msg.Text.Contains("ワン"))
+                {
+                    var rand = new Random();
+                    var dogword = new string[] { "ﾜﾝ(▼・ᴥ・▼)", "ﾜﾝ(U・ᴥ・U)", "ﾜﾝﾜﾝ(υ´•ﻌ•`υ)", "ﾜﾝ(U ･ㅊ･ U)?", "(U ･ˑ̫･ U)ﾜﾝ" };
+
+                    animalMessageList.Add(dogword[rand.Next(0, dogword.Length)]);
+                }
+                if (msg.Text.Contains("ぴよ") || msg.Text.Contains("ピヨ"))
+                {
+                    var rand = new Random();
+                    var chickword = new string[] { "ﾋﾟﾖ(•ө•)", "(ё) ピヨピヨ♪", "(ё)(ё)(ё) ピヨピヨ♪", "ﾄ(･Θ･)ﾋﾟﾖﾋﾟﾖ♪", "(*・Θ・*)ﾋﾟﾖｯ" };
+
+                    animalMessageList.Add(chickword[rand.Next(0, chickword.Length)]);
+                }
+
+                if (animalMessageList.Count != 0)
+                {
+                    var mes = string.Join('\n', animalMessageList);
+                    await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, mes);
                 }
             }
         }
