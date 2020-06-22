@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net;
 using Line.Messaging.Webhooks;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace FreedomLineBot
 {
@@ -13,11 +14,12 @@ namespace FreedomLineBot
     {
 
         [FunctionName("FreedomBot")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestMessage req)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestMessage req, ILogger log)
         {
             {
                 try
                 {
+                    log.LogInformation(req.Content.ReadAsStringAsync().Result);
                     var channelSecret = Environment.GetEnvironmentVariable("CHANNEL_SEACRET");
                     var events = await req.GetWebhookEventsAsync(channelSecret);
 
