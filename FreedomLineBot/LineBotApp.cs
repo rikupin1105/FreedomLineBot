@@ -1,5 +1,6 @@
 ﻿using Line.Messaging;
 using Line.Messaging.Webhooks;
+using Microsoft.AspNetCore.Mvc.Internal;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -64,8 +65,7 @@ namespace FreedomLineBot
             else if (msg.Text == "継続希望")
             {
                 GAS.Continue(ev.Source.UserId);
-                var User_Name = lineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Source.UserId).Result.DisplayName;
-                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, User_Name + "さん 継続希望確認しました。");
+                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続希望確認しました。\n管理用:"+ev.Source.UserId.Substring(ev.Source.UserId.Length-10));
             }
             else if (msg.Text == "継続確認イベント")
             {
