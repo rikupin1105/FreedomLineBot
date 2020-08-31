@@ -90,7 +90,7 @@
       ""contents"": [
         {
           ""type"": ""text"",
-          ""text"": ""こんにゃちはฅ(｡•ㅅ•｡ฅ"",
+          ""text"": ""こんにちはฅ(｡•ㅅ•｡ฅ"",
           ""size"": ""xl"",
           ""weight"": ""bold""
         },
@@ -120,7 +120,7 @@
           ""action"": {
             ""type"": ""uri"",
             ""label"": ""ルールを見る"",
-            ""uri"":""https://freedom-site.netlify.app/Rules""
+            ""uri"":""https://rikupin.github.io/Freedom_Site/Rules""
           },
           ""height"": ""sm"",
           ""style"": ""secondary""
@@ -130,7 +130,7 @@
           ""action"": {
             ""type"": ""uri"",
             ""label"": ""FAQを見る"",
-            ""uri"":""https://freedom-site.netlify.app/FAQs""
+            ""uri"":""https://rikupin.github.io/Freedom_Site/FAQs""
           },
           ""height"": ""sm"",
           ""style"": ""secondary""
@@ -176,7 +176,7 @@
           ""action"": {
             ""type"": ""uri"",
             ""label"": ""FAQを見る"",
-            ""uri"":""https://freedom-site.netlify.app/FAQs""
+            ""uri"":""https://rikupin.github.io/Freedom_Site/FAQs""
           },
           ""height"": ""sm"",
           ""style"": ""secondary""
@@ -222,7 +222,7 @@
           ""action"": {
             ""type"": ""uri"",
             ""label"": ""ルールを見る"",
-            ""uri"":""https://freedom-site.netlify.app/Rules""
+            ""uri"":""https://rikupin.github.io/Freedom_Site/Rules""
           },
           ""height"": ""sm"",
           ""style"": ""secondary""
@@ -268,7 +268,7 @@
           ""action"": {
             ""type"": ""uri"",
             ""label"": ""FAQを見る"",
-            ""uri"":""https://freedom-site.netlify.app/FAQs""
+            ""uri"":""https://rikupin.github.io/Freedom_Site/FAQs""
           },
           ""height"": ""sm"",
           ""style"": ""secondary""
@@ -314,7 +314,7 @@
           ""action"": {
             ""type"": ""uri"",
             ""label"": ""ルールを見る"",
-            ""uri"":""https://freedom-site.netlify.app/Rules""
+            ""uri"":""https://rikupin.github.io/Freedom_Site/Rules""
           },
           ""height"": ""sm"",
           ""style"": ""secondary""
