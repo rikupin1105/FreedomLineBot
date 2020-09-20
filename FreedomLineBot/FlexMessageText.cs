@@ -59,11 +59,12 @@ namespace FreedomLineBot
                 Footer = new BoxComponent()
                 {
                     Layout = BoxLayout.Vertical,
+                    Spacing = Spacing.Sm,
                     Contents = new IFlexComponent[]
                     {
                         new ButtonComponent()
                         {
-                            Action = new MessageTemplateAction("継続希望","継続確認"),
+                            Action = new MessageTemplateAction("希望する","継続希望"),
                             Style = ButtonStyle.Primary,
                             Height = ButtonHeight.Sm
                         },
@@ -140,10 +141,17 @@ namespace FreedomLineBot
                             Text = "いま一度FAQを確認してくださいφ(>ω<*)☆",
                             Size = ComponentSize.Md,
                             Wrap = true
-                        },
+                        }
+                    }
+                },
+                Footer = new BoxComponent()
+                {
+                    Layout = BoxLayout.Vertical,
+                    Contents = new IFlexComponent[]
+                    {
                         new ButtonComponent()
                         {
-                            Action = new UriTemplateAction("FAQを見る","https://rikupin.github.io/FreedomSite/FAQs"),
+                            Action = new UriTemplateAction("FAQを見る", "https://rikupin.github.io/FreedomSite/FAQs"),
                             Style = ButtonStyle.Secondary,
                             Height = ButtonHeight.Sm
                         }
@@ -165,10 +173,17 @@ namespace FreedomLineBot
                             Text = "いま一度ルールを確認してくださいφ(>ω<*)☆",
                             Size = ComponentSize.Md,
                             Wrap = true
-                        },
+                        }
+                    }
+                },
+                Footer = new BoxComponent()
+                {
+                    Layout = BoxLayout.Vertical,
+                    Contents = new IFlexComponent[]
+                    {
                         new ButtonComponent()
                         {
-                            Action = new UriTemplateAction("ルールを見る","https://rikupin.github.io/FreedomSite/Rules"),
+                            Action = new UriTemplateAction("ルールを見る", "https://rikupin.github.io/FreedomSite/Rules"),
                             Style = ButtonStyle.Secondary,
                             Height = ButtonHeight.Sm
                         }
