@@ -34,7 +34,8 @@ namespace FreedomLineBot
             //入会時
             var User_Name = lineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Joined.Members[0].UserId);
             GAS.Join(ev.Joined.Members[0].UserId, User_Name.Result.DisplayName);
-            await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonGreeting);
+            var bubble = new FlexMessage("こんにちは") { Contents = FlexMessageText.Flex_Greeting() };
+            await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
         }
         protected override async Task OnMemberLeaveAsync(MemberLeaveEvent ev)
         {
@@ -48,24 +49,19 @@ namespace FreedomLineBot
 
             if (msg.Text == "ルール")
             {
-                await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonRules);
-            }
-            else if (msg.Text == "ルールにゃ")
-            {
-                await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonRulesWithCat);
+                var bubble = new FlexMessage("ルール") { Contents = FlexMessageText.Flex_Rule() };
+                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
             }
             else if (msg.Text == "FAQ")
             {
-                await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonFAQs);
-            }
-            else if (msg.Text == "FAQにゃ")
-            {
-                await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonFAQsWithCat);
+                var bubble = new FlexMessage("FAQ") { Contents = FlexMessageText.Flex_Faq() };
+                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
             }
             else if (msg.Text == "継続希望")
             {
                 GAS.Continue(ev.Source.UserId);
-                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続希望確認しました。\n管理用:"+ev.Source.UserId.Substring(ev.Source.UserId.Length-10));
+                var bubble = new FlexMessage("継続確認") { Contents = FlexMessageText.Flex_Continue_Checked(ev.Source.UserId.Substring(ev.Source.UserId.Length - 10)) };
+                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
             }
             else if (msg.Text == "継続確認イベント")
             {
@@ -74,7 +70,8 @@ namespace FreedomLineBot
                 {
                     if (admin_user == ev.Source.UserId)
                     {
-                        await lineMessagingClient.ReplyMessageWithJsonAsync(ev.ReplyToken, FlexMessageText.FlexJsonCheckContinue);
+                        var bubble = new FlexMessage("継続確認イベント") { Contents = FlexMessageText.Flex_Check_Continue() };
+                        await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
                         break;
                     }
                 }
