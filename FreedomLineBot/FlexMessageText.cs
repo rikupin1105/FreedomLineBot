@@ -1,7 +1,7 @@
 ﻿using Line.Messaging;
 
 namespace FreedomLineBot
-{
+{    
     class FlexMessageText
     {
         public static BubbleContainer Flex_Check_Continue()
@@ -36,7 +36,8 @@ namespace FreedomLineBot
                                     Text = "日曜日 22:00 まで",
                                     Size = ComponentSize.Sm,
                                     Wrap = true,
-                                    Color = ColorCode.FromRgb(102, 102, 102)
+                                    Color = ColorCode.FromRgb(102, 102, 102),
+                                    Align = Align.End
                                 }
                             }
                         },
@@ -131,20 +132,8 @@ namespace FreedomLineBot
         {
             return new BubbleContainer()
             {
+                Size = BubbleSize.micro,
                 Body = new BoxComponent()
-                {
-                    Layout = BoxLayout.Vertical,
-                    Contents = new IFlexComponent[]
-                    {
-                        new TextComponent()
-                        {
-                            Text = "いま一度FAQを確認してくださいφ(>ω<*)☆",
-                            Size = ComponentSize.Md,
-                            Wrap = true
-                        }
-                    }
-                },
-                Footer = new BoxComponent()
                 {
                     Layout = BoxLayout.Vertical,
                     Contents = new IFlexComponent[]
@@ -163,20 +152,8 @@ namespace FreedomLineBot
         {
             return new BubbleContainer()
             {
+                Size = BubbleSize.micro,
                 Body = new BoxComponent()
-                {
-                    Layout = BoxLayout.Vertical,
-                    Contents = new IFlexComponent[]
-                    {
-                        new TextComponent()
-                        {
-                            Text = "いま一度ルールを確認してくださいφ(>ω<*)☆",
-                            Size = ComponentSize.Md,
-                            Wrap = true
-                        }
-                    }
-                },
-                Footer = new BoxComponent()
                 {
                     Layout = BoxLayout.Vertical,
                     Contents = new IFlexComponent[]
@@ -195,6 +172,7 @@ namespace FreedomLineBot
         {
             return new BubbleContainer()
             {
+                Size = BubbleSize.kilo,
                 Body = new BoxComponent()
                 {
                     Layout = BoxLayout.Vertical,
