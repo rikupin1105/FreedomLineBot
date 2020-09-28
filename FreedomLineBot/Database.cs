@@ -54,6 +54,7 @@ namespace FreedomLineBot
             {
                 id = Id,
                 name = Name,
+                newername = Name,
                 joinedDate = JoinedDate,
                 check = Check,
                 postScript = PostScript
@@ -82,12 +83,43 @@ namespace FreedomLineBot
                 }
             } while (iterator.HasMoreResults);
         }
+        public async Task MemberChecked()
+        {
+            var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c Where c.check != null");
+            var sMember = "";
+            do
+            {
+                var result = await iterator.ReadNextAsync();
 
+                foreach (var item in result)
+                {
+                    sMember += item.name + "\n";
+                }
+            } while (iterator.HasMoreResults);
+            Sentence = sMember;
+        }
+        public async Task MemberNonChecked()
+        {
+            var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c Where c.check = null");
+            var sMember = "";
+            do
+            {
+                var result = await iterator.ReadNextAsync();
+
+                foreach (var item in result)
+                {
+                    sMember += item.name + "\n";
+                }
+            } while (iterator.HasMoreResults);
+            Sentence = sMember;
+        }
+        public static string Sentence { get; set; }
         public class Member
         {
             public string id { get; set; }
             public string group = "freedom";
             public string name { get; set; }
+            public string newername { get; set; }
             public string joinedDate { get; set; }
             public string check { get; set; }
             public string postScript { get; set; }

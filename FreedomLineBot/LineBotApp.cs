@@ -62,7 +62,6 @@ namespace FreedomLineBot
             await db.MemberDelete(ev.Left.Members[0].UserId);
 
             Log.LogInformation("退会");
-
         }
         private async void Messaging(MessageEvent ev)
         {
@@ -88,7 +87,7 @@ namespace FreedomLineBot
                 if (await db.MemberCheck(ev.Source.UserId) == true)
                 {
                     var bubble = new FlexMessage("継続確認") { Contents = FlexMessageText.Flex_Continue_Checked(ev.Source.UserId.Substring(ev.Source.UserId.Length - 10)) };
-                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble }); 
+                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
                     Log.LogInformation("継続確認");
                 }
 
@@ -117,9 +116,38 @@ namespace FreedomLineBot
                         var sw = new System.Diagnostics.Stopwatch();
                         sw.Start();
                         var db = new Database();
-                        db.MemberCheckReset();
+                        await db.MemberCheckReset();
                         sw.Stop();
                         await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, $"リセットしました\n{sw.ElapsedMilliseconds}ミリ秒");
+                        break;
+                    }
+                }
+            }
+            else if (msg.Text == "継続希望メンバー")
+            {
+                var admin_users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
+                foreach (string admin_user in admin_users)
+                {
+                    if (admin_user == ev.Source.UserId)
+                    {
+                        var db = new Database();
+                        await db.MemberChecked();
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "敬称略、順不同、入会時の名前\n"+Database.Sentence);
+                        break;
+                    }
+                }
+
+            }
+            else if (msg.Text == "継続未希望メンバー")
+            {
+                var admin_users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
+                foreach (string admin_user in admin_users)
+                {
+                    if (admin_user == ev.Source.UserId)
+                    {
+                        var db = new Database();
+                        await db.MemberNonChecked();
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "敬称略、順不同、入会時の名前\n" + Database.Sentence);
                         break;
                     }
                 }
