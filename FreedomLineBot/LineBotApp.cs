@@ -1,6 +1,8 @@
 ﻿using Line.Messaging;
 using Line.Messaging.Webhooks;
 using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,9 +11,15 @@ namespace FreedomLineBot
 {
     class LineBotApp : WebhookApplication
     {
-        private LineMessagingClient lineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN"));
+        private LineMessagingClient LineMessagingClient { get; set; }
+        private ILogger Log { get; set; }
         private GoogleSpreadSheet GAS = new GoogleSpreadSheet();
 
+        public LineBotApp(LineMessagingClient lineMessagingClient, ILogger log)
+        {
+            LineMessagingClient = lineMessagingClient;
+            Log = log;
+        }
         protected override async Task OnMessageAsync(MessageEvent ev)
         {
             switch (ev.Message.Type)
@@ -32,16 +40,29 @@ namespace FreedomLineBot
         protected override async Task OnMemberJoinAsync(MemberJoinEvent ev)
         {
             //入会時
-            var User_Name = lineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Joined.Members[0].UserId);
+            var User_Name = LineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Joined.Members[0].UserId);
             GAS.Join(ev.Joined.Members[0].UserId, User_Name.Result.DisplayName);
             var bubble = new FlexMessage("こんにちは") { Contents = FlexMessageText.Flex_Greeting() };
-            await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+            await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+
+            //CosmosDB
+            var db = new Database();
+            await db.MemberAdd(ev.Joined.Members[0].UserId, User_Name.Result.DisplayName, DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd h:mm"));
+
+            Log.LogInformation("入会");
         }
         protected override async Task OnMemberLeaveAsync(MemberLeaveEvent ev)
         {
             //退会時
             GAS.Leave(ev.Left.Members[0].UserId);
-            await lineMessagingClient.PushMessageAsync(ev.Source.Id, "退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください");
+            await LineMessagingClient.PushMessageAsync(ev.Source.Id, "退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください");
+
+            //CosmosDB
+            var db = new Database();
+            await db.MemberDelete(ev.Left.Members[0].UserId);
+
+            Log.LogInformation("退会");
+
         }
         private async void Messaging(MessageEvent ev)
         {
@@ -50,18 +71,27 @@ namespace FreedomLineBot
             if (msg.Text == "ルール")
             {
                 var bubble = new FlexMessage("ルール") { Contents = FlexMessageText.Flex_Rule() };
-                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                Log.LogInformation("ルール");
             }
             else if (msg.Text == "FAQ")
             {
                 var bubble = new FlexMessage("FAQ") { Contents = FlexMessageText.Flex_Faq() };
-                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                Log.LogInformation("FAQ");
             }
             else if (msg.Text == "継続希望")
             {
                 GAS.Continue(ev.Source.UserId);
-                var bubble = new FlexMessage("継続確認") { Contents = FlexMessageText.Flex_Continue_Checked(ev.Source.UserId.Substring(ev.Source.UserId.Length - 10)) };
-                await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+
+                var db = new Database();
+                if (await db.MemberCheck(ev.Source.UserId) == true)
+                {
+                    var bubble = new FlexMessage("継続確認") { Contents = FlexMessageText.Flex_Continue_Checked(ev.Source.UserId.Substring(ev.Source.UserId.Length - 10)) };
+                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble }); 
+                    Log.LogInformation("継続確認");
+                }
+
             }
             else if (msg.Text == "継続確認イベント")
             {
@@ -71,7 +101,25 @@ namespace FreedomLineBot
                     if (admin_user == ev.Source.UserId)
                     {
                         var bubble = new FlexMessage("継続確認イベント") { Contents = FlexMessageText.Flex_Check_Continue() };
-                        await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                        Log.LogInformation("継続確認イベント");
+                        break;
+                    }
+                }
+            }
+            else if (msg.Text == "継続確認リセット")
+            {
+                var admin_users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
+                foreach (string admin_user in admin_users)
+                {
+                    if (admin_user == ev.Source.UserId)
+                    {
+                        var sw = new System.Diagnostics.Stopwatch();
+                        sw.Start();
+                        var db = new Database();
+                        db.MemberCheckReset();
+                        sw.Stop();
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, $"リセットしました\n{sw.ElapsedMilliseconds}ミリ秒");
                         break;
                     }
                 }
@@ -104,7 +152,8 @@ namespace FreedomLineBot
                 if (animalMessageList.Count != 0)
                 {
                     var mes = string.Join('\n', animalMessageList);
-                    await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, mes);
+                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, mes);
+                    Log.LogInformation("動物");
                 }
             }
         }

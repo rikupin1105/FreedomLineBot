@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FreedomLineBot": {
+      "commandName": "Project",
+      "commandLineArgs": "start --verbose"
+    }
+  }
+}
