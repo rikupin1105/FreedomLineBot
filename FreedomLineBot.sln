@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreedomLineBot", "FreedomLineBot\FreedomLineBot.csproj", "{093EC8E4-06AE-4D15-AA23-5F966D6784EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateMemberName", "UpdateMemberName\UpdateMemberName.csproj", "{18E18F9E-FE93-4ACC-B154-5D83EAC58C5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateMemberName", "UpdateMemberName\UpdateMemberName.csproj", "{F10A3F74-2083-4A3E-916E-8F81971360DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{093EC8E4-06AE-4D15-AA23-5F966D6784EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{093EC8E4-06AE-4D15-AA23-5F966D6784EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{093EC8E4-06AE-4D15-AA23-5F966D6784EB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18E18F9E-FE93-4ACC-B154-5D83EAC58C5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18E18F9E-FE93-4ACC-B154-5D83EAC58C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18E18F9E-FE93-4ACC-B154-5D83EAC58C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18E18F9E-FE93-4ACC-B154-5D83EAC58C5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F10A3F74-2083-4A3E-916E-8F81971360DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F10A3F74-2083-4A3E-916E-8F81971360DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F10A3F74-2083-4A3E-916E-8F81971360DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F10A3F74-2083-4A3E-916E-8F81971360DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

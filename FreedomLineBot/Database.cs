@@ -32,6 +32,7 @@ namespace FreedomLineBot
                 {
                     id = Id,
                     name = responce.Resource.name,
+                    newername = responce.Resource.newername,
                     joinedDate = responce.Resource.joinedDate,
                     check = "済",
                     postScript = responce.Resource.postScript
@@ -75,6 +76,7 @@ namespace FreedomLineBot
                     {
                         id = item.id,
                         name = item.name,
+                        newername = item.newername,
                         joinedDate = item.joinedDate,
                         check = null,
                         postScript = item.postScript
@@ -93,7 +95,7 @@ namespace FreedomLineBot
 
                 foreach (var item in result)
                 {
-                    sMember += item.name + "\n";
+                    sMember += "\n"+item.newername;
                 }
             } while (iterator.HasMoreResults);
             Sentence = sMember;
@@ -108,7 +110,7 @@ namespace FreedomLineBot
 
                 foreach (var item in result)
                 {
-                    sMember += item.name + "\n";
+                    sMember += "\n"+item.newername;
                 }
             } while (iterator.HasMoreResults);
             Sentence = sMember;
