@@ -132,7 +132,7 @@ namespace FreedomLineBot
                     {
                         var db = new Database();
                         await db.MemberChecked();
-                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "敬称略、順不同、入会時の名前\n"+Database.Sentence);
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "敬称略、順不同\n"+Database.Sentence);
                         break;
                     }
                 }
@@ -147,7 +147,7 @@ namespace FreedomLineBot
                     {
                         var db = new Database();
                         await db.MemberNonChecked();
-                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "敬称略、順不同、入会時の名前\n" + Database.Sentence);
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "敬称略、順不同\n" + Database.Sentence);
                         break;
                     }
                 }
