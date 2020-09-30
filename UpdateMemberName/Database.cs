@@ -1,10 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Line.Messaging;
-using Microsoft.Azure.WebJobs.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace UpdateMemberName
