@@ -1,7 +1,5 @@
 ﻿using Line.Messaging;
 using Line.Messaging.Webhooks;
-using Microsoft.AspNetCore.Mvc.Internal;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,7 +12,8 @@ namespace FreedomLineBot
         private LineMessagingClient LineMessagingClient { get; set; }
         private ILogger Log { get; set; }
         private GoogleSpreadSheet GAS = new GoogleSpreadSheet();
-
+        private string GroupID = Environment.GetEnvironmentVariable("GroupId");
+        private string[] Admin_Users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
         public LineBotApp(LineMessagingClient lineMessagingClient, ILogger log)
         {
             LineMessagingClient = lineMessagingClient;
@@ -39,41 +38,52 @@ namespace FreedomLineBot
         }
         protected override async Task OnMemberJoinAsync(MemberJoinEvent ev)
         {
-            //入会時
-            var User_Name = LineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Joined.Members[0].UserId);
-            GAS.Join(ev.Joined.Members[0].UserId, User_Name.Result.DisplayName);
-            var bubble = new FlexMessage("こんにちは") { Contents = FlexMessageText.Flex_Greeting() };
-            await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+            if (ev.Source.Id == GroupID)
+            {
+                //入会時
+                var User_Name = LineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Joined.Members[0].UserId);
+                GAS.Join(ev.Joined.Members[0].UserId, User_Name.Result.DisplayName);
+                var bubble = new FlexMessage("こんにちは") { Contents = FlexMessageText.Flex_Greeting() };
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
 
-            //CosmosDB
-            var db = new Database();
-            await db.MemberAdd(ev.Joined.Members[0].UserId, User_Name.Result.DisplayName, DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd h:mm"));
+                //CosmosDB
+                var db = new Database();
+                await db.MemberAdd(new Member
+                {
+                    id = ev.Joined.Members[0].UserId,
+                    name = User_Name.Result.DisplayName,
+                    joinedDate = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd h:mm")
+                });
 
-            Log.LogInformation("入会");
+                Log.LogInformation("入会");
+            }
         }
         protected override async Task OnMemberLeaveAsync(MemberLeaveEvent ev)
         {
-            //退会時
-            GAS.Leave(ev.Left.Members[0].UserId);
-            await LineMessagingClient.PushMessageAsync(ev.Source.Id, "退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください");
+            if (ev.Source.Id == GroupID)
+            {
+                //退会時
+                GAS.Leave(ev.Left.Members[0].UserId);
+                await LineMessagingClient.PushMessageAsync(ev.Source.Id, "退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください");
 
-            //CosmosDB
-            var db = new Database();
-            await db.MemberDelete(ev.Left.Members[0].UserId);
+                //CosmosDB
+                var db = new Database();
+                await db.MemberDelete(ev.Left.Members[0].UserId);
 
-            Log.LogInformation("退会");
+                Log.LogInformation("退会");
+            }
         }
         private async void Messaging(MessageEvent ev)
         {
             if (!(ev.Message is TextEventMessage msg)) { return; }
 
-            if (msg.Text == "ルール")
+            if (msg.Text.Contains("ルール"))
             {
                 var bubble = new FlexMessage("ルール") { Contents = FlexMessageText.Flex_Rule() };
                 await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
                 Log.LogInformation("ルール");
             }
-            else if (msg.Text == "FAQ")
+            else if (msg.Text.Contains("FAQ"))
             {
                 var bubble = new FlexMessage("FAQ") { Contents = FlexMessageText.Flex_Faq() };
                 await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
@@ -94,8 +104,8 @@ namespace FreedomLineBot
             }
             else if (msg.Text == "継続確認イベント")
             {
-                var admin_users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
-                foreach (string admin_user in admin_users)
+                var Admin_Users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
+                foreach (string admin_user in Admin_Users)
                 {
                     if (admin_user == ev.Source.UserId)
                     {
@@ -108,31 +118,27 @@ namespace FreedomLineBot
             }
             else if (msg.Text == "継続確認リセット")
             {
-                var admin_users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
-                foreach (string admin_user in admin_users)
+                var Admin_Users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
+                foreach (string admin_user in Admin_Users)
                 {
                     if (admin_user == ev.Source.UserId)
                     {
-                        var sw = new System.Diagnostics.Stopwatch();
-                        sw.Start();
                         var db = new Database();
                         await db.MemberCheckReset();
-                        sw.Stop();
-                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, $"リセットしました\n{sw.ElapsedMilliseconds}ミリ秒");
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, $"リセットしました");
                         break;
                     }
                 }
             }
             else if (msg.Text == "継続希望メンバー")
             {
-                var admin_users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
-                foreach (string admin_user in admin_users)
+                foreach (string admin_user in Admin_Users)
                 {
                     if (admin_user == ev.Source.UserId)
                     {
                         var db = new Database();
-                        await db.MemberChecked();
-                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "敬称略、順不同\n"+Database.Sentence);
+                        await db.GetMember("SELECT c.newername FROM c Where c.check != null");
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続希望メンバー\n敬称略、順不同\n" + Database.Sentence);
                         break;
                     }
                 }
@@ -140,14 +146,13 @@ namespace FreedomLineBot
             }
             else if (msg.Text == "継続未希望メンバー")
             {
-                var admin_users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
-                foreach (string admin_user in admin_users)
+                foreach (string admin_user in Admin_Users)
                 {
                     if (admin_user == ev.Source.UserId)
                     {
                         var db = new Database();
-                        await db.MemberNonChecked();
-                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "敬称略、順不同\n" + Database.Sentence);
+                        await db.GetMember("SELECT c.newername FROM c Where c.check = null");
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続未希望メンバー\n敬称略、順不同\n" + Database.Sentence);
                         break;
                     }
                 }
