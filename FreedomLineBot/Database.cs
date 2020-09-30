@@ -26,7 +26,7 @@ namespace FreedomLineBot
             }
             else
             {
-                var m = new Member
+                await container.UpsertItemAsync(new Member
                 {
                     id = Id,
                     name = responce.Resource.name,
@@ -34,8 +34,7 @@ namespace FreedomLineBot
                     joinedDate = responce.Resource.joinedDate,
                     check = "済",
                     postScript = responce.Resource.postScript
-                };
-                await container.UpsertItemAsync(m);
+                });
                 return true;
             }
         }
@@ -45,7 +44,7 @@ namespace FreedomLineBot
         }
         public async Task MemberAdd(Member m)
         {
-            await container.CreateItemAsync(m);
+            await container.UpsertItemAsync(m);
         }
         public async Task MemberCheckReset()
         {
@@ -56,7 +55,7 @@ namespace FreedomLineBot
 
                 foreach (var item in result)
                 {
-                    var m = new Member
+                    await container.UpsertItemAsync(new Member
                     {
                         id = item.id,
                         name = item.name,
@@ -64,8 +63,7 @@ namespace FreedomLineBot
                         joinedDate = item.joinedDate,
                         check = null,
                         postScript = item.postScript
-                    };
-                    await container.UpsertItemAsync(m);
+                    });
                 }
             } while (iterator.HasMoreResults);
         }
@@ -85,6 +83,6 @@ namespace FreedomLineBot
             Sentence = sMember;
         }
         public static string Sentence { get; set; }
-        
+
     }
 }
