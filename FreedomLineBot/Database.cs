@@ -1,7 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FreedomLineBot
@@ -16,7 +14,7 @@ namespace FreedomLineBot
         private string containerId = Environment.GetEnvironmentVariable("CosmosDBContainerId");
         public Database()
         {
-            cosmosClient = new CosmosClient(this.EndpointUri, this.PrimaryKey);
+            cosmosClient = new CosmosClient(EndpointUri, PrimaryKey);
             container = cosmosClient.GetContainer(databaseId, containerId);
         }
         public async Task<bool> MemberCheck(string Id)
@@ -43,24 +41,10 @@ namespace FreedomLineBot
         }
         public async Task MemberDelete(string ID)
         {
-            var m = new Member
-            {
-                id = ID
-            };
-            await container.DeleteItemAsync<Member>(m.id, new PartitionKey(m.group));
+            await container.DeleteItemAsync<Member>(ID, new PartitionKey("freedom"));
         }
-        public async Task MemberAdd(string Id, string Name, string JoinedDate, string Check = null, string PostScript = null)
+        public async Task MemberAdd(Member m)
         {
-            var m = new Member
-            {
-                id = Id,
-                name = Name,
-                newername = Name,
-                joinedDate = JoinedDate,
-                check = Check,
-                postScript = PostScript
-            };
-
             await container.CreateItemAsync(m);
         }
         public async Task MemberCheckReset()
@@ -85,9 +69,9 @@ namespace FreedomLineBot
                 }
             } while (iterator.HasMoreResults);
         }
-        public async Task MemberChecked()
+        public async Task GetMember(string query)
         {
-            var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c Where c.check != null");
+            var iterator = container.GetItemQueryIterator<Member>(query);
             var sMember = "";
             do
             {
@@ -95,36 +79,12 @@ namespace FreedomLineBot
 
                 foreach (var item in result)
                 {
-                    sMember += "\n"+item.newername;
-                }
-            } while (iterator.HasMoreResults);
-            Sentence = sMember;
-        }
-        public async Task MemberNonChecked()
-        {
-            var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c Where c.check = null");
-            var sMember = "";
-            do
-            {
-                var result = await iterator.ReadNextAsync();
-
-                foreach (var item in result)
-                {
-                    sMember += "\n"+item.newername;
+                    sMember += "\n" + item.newername;
                 }
             } while (iterator.HasMoreResults);
             Sentence = sMember;
         }
         public static string Sentence { get; set; }
-        public class Member
-        {
-            public string id { get; set; }
-            public string group = "freedom";
-            public string name { get; set; }
-            public string newername { get; set; }
-            public string joinedDate { get; set; }
-            public string check { get; set; }
-            public string postScript { get; set; }
-        }
+        
     }
 }
