@@ -11,7 +11,6 @@ namespace FreedomLineBot
     {
         private LineMessagingClient LineMessagingClient { get; set; }
         private ILogger Log { get; set; }
-        private GoogleSpreadSheet GAS = new GoogleSpreadSheet();
         private string GroupID = Environment.GetEnvironmentVariable("GroupId");
         private string[] Admin_Users = Environment.GetEnvironmentVariable("ADMIN_USER").Split(',');
         public LineBotApp(LineMessagingClient lineMessagingClient, ILogger log)
@@ -42,7 +41,6 @@ namespace FreedomLineBot
             {
                 //入会時
                 var User_Name = LineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Joined.Members[0].UserId);
-                GAS.Join(ev.Joined.Members[0].UserId, User_Name.Result.DisplayName);
                 var bubble = new FlexMessage("こんにちは") { Contents = FlexMessageText.Flex_Greeting() };
                 await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
 
@@ -52,6 +50,7 @@ namespace FreedomLineBot
                 {
                     id = ev.Joined.Members[0].UserId,
                     name = User_Name.Result.DisplayName,
+                    newername = User_Name.Result.DisplayName,
                     joinedDate = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd h:mm")
                 });
 
@@ -62,8 +61,6 @@ namespace FreedomLineBot
         {
             if (ev.Source.Id == GroupID)
             {
-                //退会時
-                GAS.Leave(ev.Left.Members[0].UserId);
                 await LineMessagingClient.PushMessageAsync(ev.Source.Id, "退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください");
 
                 //CosmosDB
@@ -91,8 +88,6 @@ namespace FreedomLineBot
             }
             else if (msg.Text == "継続希望")
             {
-                GAS.Continue(ev.Source.UserId);
-
                 var db = new Database();
                 if (await db.MemberCheck(ev.Source.UserId) == true)
                 {
@@ -100,7 +95,6 @@ namespace FreedomLineBot
                     await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
                     Log.LogInformation("継続確認");
                 }
-
             }
             else if (msg.Text == "継続確認イベント")
             {
