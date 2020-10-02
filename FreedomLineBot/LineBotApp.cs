@@ -74,7 +74,14 @@ namespace FreedomLineBot
         {
             if (!(ev.Message is TextEventMessage msg)) { return; }
 
-            if (msg.Text.Contains("ルール"))
+            if (msg.Text.Contains("ルール") && msg.Text.Contains("FAQ"))
+            {
+                var bubble1 = new FlexMessage("ルール") { Contents = FlexMessageText.Flex_Rule() };
+                var bubble2 = new FlexMessage("FAQ") { Contents = FlexMessageText.Flex_Faq() };
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble1,bubble2 });
+                Log.LogInformation("ルール&FAQ");
+            }
+            else if (msg.Text.Contains("ルール"))
             {
                 var bubble = new FlexMessage("ルール") { Contents = FlexMessageText.Flex_Rule() };
                 await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
