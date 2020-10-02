@@ -1,8 +1,8 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using Line.Messaging;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using Line.Messaging;
-using Microsoft.Extensions.Logging;
 
 namespace UpdateMemberName
 {
@@ -16,11 +16,12 @@ namespace UpdateMemberName
         private string containerId = Environment.GetEnvironmentVariable("CosmosDBContainerId");
         private LineMessagingClient lineMessagingClient;
         private string GroupId = Environment.GetEnvironmentVariable("GroupId");
+        private string AdminGroupId = Environment.GetEnvironmentVariable("AdminGroupID");
         private ILogger log;
         public Database(ILogger log)
         {
             this.log = log;
-            cosmosClient = new CosmosClient(this.EndpointUri, this.PrimaryKey);
+            cosmosClient = new CosmosClient(EndpointUri, PrimaryKey);
             container = cosmosClient.GetContainer(databaseId, containerId);
             lineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN"));
         }
@@ -37,16 +38,22 @@ namespace UpdateMemberName
                     log.LogInformation(item.id);
                     log.LogInformation(item.name);
                     log.LogInformation(NewerName);
-                    var m = new Member
+
+                    if (NewerName != item.newername)
                     {
-                        id = item.id,
-                        name = item.name,
-                        newername = NewerName,
-                        joinedDate = item.joinedDate,
-                        check = item.check,
-                        postScript = item.postScript
-                    };
-                    await container.UpsertItemAsync(m);
+                        //名前の更新
+                        lineMessagingClient.PushMessageAsync(AdminGroupId, $"名前を変更しました\n入会時名前 {item.name}\n変更前名前 {item.newername}\n変更語名前 {NewerName}");
+                        var m = new Member
+                        {
+                            id = item.id,
+                            name = item.name,
+                            newername = NewerName,
+                            joinedDate = item.joinedDate,
+                            check = item.check,
+                            postScript = item.postScript
+                        };
+                        await container.UpsertItemAsync(m);
+                    }
                 }
             } while (iterator.HasMoreResults);
         }
