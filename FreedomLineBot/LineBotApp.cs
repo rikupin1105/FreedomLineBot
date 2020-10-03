@@ -158,6 +158,33 @@ namespace FreedomLineBot
                     }
                 }
             }
+            else if (msg.Text == "継続希望旧メンバー")
+            {
+                foreach (string admin_user in Admin_Users)
+                {
+                    if (admin_user == ev.Source.UserId)
+                    {
+                        var db = new Database();
+                        await db.GetMember("SELECT c.name FROM c Where c.check != null");
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続希望メンバー\n敬称略、順不同\n" + Database.Sentence);
+                        break;
+                    }
+                }
+
+            }
+            else if (msg.Text == "継続未希望旧メンバー")
+            {
+                foreach (string admin_user in Admin_Users)
+                {
+                    if (admin_user == ev.Source.UserId)
+                    {
+                        var db = new Database();
+                        await db.GetMember("SELECT c.name FROM c Where c.check = null");
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続未希望メンバー\n敬称略、順不同\n" + Database.Sentence);
+                        break;
+                    }
+                }
+            }
             else
             {
                 var animalMessageList = new List<string>();
