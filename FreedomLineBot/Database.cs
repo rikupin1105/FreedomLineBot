@@ -82,6 +82,21 @@ namespace FreedomLineBot
             } while (iterator.HasMoreResults);
             Sentence = sMember;
         }
+        public async Task GetFormerMember(string query)
+        {
+            var iterator = container.GetItemQueryIterator<Member>(query);
+            var sMember = "";
+            do
+            {
+                var result = await iterator.ReadNextAsync();
+
+                foreach (var item in result)
+                {
+                    sMember += "\n" + item.name;
+                }
+            } while (iterator.HasMoreResults);
+            Sentence = sMember;
+        }
         public static string Sentence { get; set; }
 
     }
