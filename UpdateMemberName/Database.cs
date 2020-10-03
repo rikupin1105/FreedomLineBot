@@ -35,14 +35,13 @@ namespace UpdateMemberName
                 {
                     var user = lineMessagingClient.GetGroupMemberProfileAsync(GroupId, item.id);
                     var NewerName = user.Result.DisplayName;
-                    log.LogInformation(item.id);
-                    log.LogInformation(item.name);
-                    log.LogInformation(NewerName);
 
                     if (NewerName != item.newername)
                     {
-                        //名前の更新
-                        lineMessagingClient.PushMessageAsync(AdminGroupId, $"名前を変更しました\n入会時名前 {item.name}\n変更前名前 {item.newername}\n変更語名前 {NewerName}");
+                        log.LogInformation(item.id);
+                        log.LogInformation(item.name);
+                        log.LogInformation(NewerName);
+                        await lineMessagingClient.PushMessageAsync(AdminGroupId, $"名前を変更しました\n入会時名前 {item.name}\n変更前名前 {item.newername}\n変更語名前 {NewerName}");
                         var m = new Member
                         {
                             id = item.id,
