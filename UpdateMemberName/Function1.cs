@@ -8,7 +8,7 @@ namespace UpdateMemberName
     public static class Function1
     {
         [FunctionName("Function1")]
-        public static async void Run([TimerTrigger("0 * */6 * * *")]TimerInfo myTimer, ILogger log)
+        public static async void Run([TimerTrigger("0 0 */6 * * *")]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var db = new Database(log);
