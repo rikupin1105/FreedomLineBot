@@ -71,7 +71,7 @@ namespace FreedomLineBot
                         },
                         new ButtonComponent()
                         {
-                            Action = new UriTemplateAction("ルールを見る","https://rikupin.github.io/FreedomSite/Rules"),
+                            Action = new UriTemplateAction("ルールを見る","https://rikupin1105.github.io/FreedomSite/Rules"),
                             Style = ButtonStyle.Secondary,
                             Height = ButtonHeight.Sm
                         }
@@ -91,7 +91,7 @@ namespace FreedomLineBot
                     {
                         new TextComponent()
                         {
-                            Text = "こんにちは",
+                            Text = "いらっしゃいませー",
                             Weight = Weight.Bold,
                             Size = ComponentSize.Xl
                         },
@@ -112,13 +112,13 @@ namespace FreedomLineBot
                     {
                         new ButtonComponent()
                         {
-                            Action = new UriTemplateAction("ルール","https://rikupin.github.io/FreedomSite/Rules"),
+                            Action = new UriTemplateAction("ルール","https://rikupin1105.github.io/FreedomSite/Rules"),
                             Style = ButtonStyle.Primary,
                             Height = ButtonHeight.Sm
                         },
                         new ButtonComponent()
                         {
-                            Action = new UriTemplateAction("FAQ","https://rikupin.github.io/FreedomSite/FAQs"),
+                            Action = new UriTemplateAction("FAQ","https://rikupin1105.github.io/FreedomSite/FAQs"),
                             Style = ButtonStyle.Secondary,
                             Height = ButtonHeight.Sm,
                             Margin = Spacing.Md
@@ -140,7 +140,7 @@ namespace FreedomLineBot
                     {
                         new ButtonComponent()
                         {
-                            Action = new UriTemplateAction("FAQを見る", "https://rikupin.github.io/FreedomSite/FAQs"),
+                            Action = new UriTemplateAction("FAQを見る", "https://rikupin1105.github.io/FreedomSite/FAQs"),
                             Style = ButtonStyle.Secondary,
                             Height = ButtonHeight.Sm
                         }
@@ -160,7 +160,7 @@ namespace FreedomLineBot
                     {
                         new ButtonComponent()
                         {
-                            Action = new UriTemplateAction("ルールを見る", "https://rikupin.github.io/FreedomSite/Rules"),
+                            Action = new UriTemplateAction("ルールを見る", "https://rikupin1105.github.io/FreedomSite/Rules"),
                             Style = ButtonStyle.Secondary,
                             Height = ButtonHeight.Sm
                         }
@@ -176,7 +176,7 @@ namespace FreedomLineBot
                 Body = new BoxComponent()
                 {
                     Layout = BoxLayout.Vertical,
-                    Action = new UriTemplateAction("ルールを見る", "https://rikupin.github.io/FreedomSite/Rules"),
+                    Action = new UriTemplateAction("ルールを見る", "https://rikupin1105.github.io/FreedomSite/Rules"),
                     Contents = new IFlexComponent[]
                     {
                         new TextComponent()
