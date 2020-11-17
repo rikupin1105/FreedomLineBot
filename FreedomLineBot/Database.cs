@@ -17,12 +17,25 @@ namespace FreedomLineBot
             cosmosClient = new CosmosClient(EndpointUri, PrimaryKey);
             container = cosmosClient.GetContainer(databaseId, containerId);
         }
-        public async Task<bool> MemberCheck(string Id)
+        public async Task<bool> RejoinCheck(string Id)
+        {
+            var count = 0;
+            var iterator = container.GetItemQueryIterator<Member>($"SELECT * FROM c WHERE c.id = \"{Id}\"");
+            do
+            {
+                await iterator.ReadNextAsync();
+                count++;
+            } while (iterator.HasMoreResults);
+
+            if (count == 0) return false;
+            else return true;
+        }
+        public async Task<checkResult> MemberCheck(string Id)
         {
             var responce = await container.ReadItemAsync<Member>(Id, new PartitionKey("freedom"));
             if (responce.Resource.check == "済")
             {
-                return false;
+                return new checkResult { already = false };
             }
             else
             {
@@ -35,12 +48,28 @@ namespace FreedomLineBot
                     check = "済",
                     postScript = responce.Resource.postScript
                 });
-                return true;
+                return new checkResult { already = true, name = responce.Resource.newername };
             }
         }
-        public async Task MemberDelete(string ID)
+        public class checkResult
         {
-            await container.DeleteItemAsync<Member>(ID, new PartitionKey("freedom"));
+            public bool already { get; set; }
+            public string name { get; set; }
+        }
+
+        public async Task MemberLeave(string Id)
+        {
+            var responce = await container.ReadItemAsync<Member>(Id, new PartitionKey("freedom"));
+            await container.UpsertItemAsync(new Member
+            {
+                id = Id,
+                name = responce.Resource.name,
+                newername = responce.Resource.newername,
+                joinedDate = responce.Resource.joinedDate,
+                check = responce.Resource.check,
+                postScript = responce.Resource.postScript,
+                leavedDate = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd h:mm")
+            });
         }
         public async Task MemberAdd(Member m)
         {
@@ -48,7 +77,7 @@ namespace FreedomLineBot
         }
         public async Task MemberCheckReset()
         {
-            var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c Where c.check != null");
+            var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c Where c.check != null and c.leavedDate = null");
             do
             {
                 var result = await iterator.ReadNextAsync();

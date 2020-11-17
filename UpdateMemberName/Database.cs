@@ -27,7 +27,7 @@ namespace UpdateMemberName
         }
         public async Task UpdateMember()
         {
-            var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c");
+            var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c WHERE c.leavedDate = null");
             do
             {
                 var result = await iterator.ReadNextAsync();
@@ -41,6 +41,7 @@ namespace UpdateMemberName
                         log.LogInformation(item.id);
                         log.LogInformation(item.name);
                         log.LogInformation(NewerName);
+
                         await lineMessagingClient.PushMessageAsync(AdminGroupId, $"名前を変更しました\n入会時名前 {item.name}\n変更前名前 {item.newername}\n変更語名前 {NewerName}");
                         var m = new Member
                         {
@@ -49,7 +50,8 @@ namespace UpdateMemberName
                             newername = NewerName,
                             joinedDate = item.joinedDate,
                             check = item.check,
-                            postScript = item.postScript
+                            postScript = item.postScript,
+                            leavedDate = item.leavedDate
                         };
                         await container.UpsertItemAsync(m);
                     }

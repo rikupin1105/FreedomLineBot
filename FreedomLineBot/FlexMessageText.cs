@@ -168,7 +168,7 @@ namespace FreedomLineBot
                 }
             };
         }
-        public static BubbleContainer Flex_Continue_Checked(string ID)
+        public static BubbleContainer Flex_Continue_Checked(string Name)
         {
             return new BubbleContainer()
             {
@@ -181,12 +181,7 @@ namespace FreedomLineBot
                     {
                         new TextComponent()
                         {
-                            Text = "継続希望を確認しました。"
-                        },
-                        new TextComponent()
-                        {
-                            Text = $"管理用 : {ID}",
-                            Size = ComponentSize.Sm
+                            Text = $"{Name}さんの継続希望を確認しました。"
                         }
                     }
                 }

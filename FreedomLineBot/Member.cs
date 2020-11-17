@@ -9,5 +9,6 @@
         public string joinedDate { get; set; }
         public string check { get; set; }
         public string postScript { get; set; }
+        public string leavedDate { get; set; }
     }
 }
