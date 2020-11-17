@@ -84,7 +84,7 @@ namespace FreedomLineBot
             {
                 var bubble1 = new FlexMessage("ルール") { Contents = FlexMessageText.Flex_Rule() };
                 var bubble2 = new FlexMessage("FAQ") { Contents = FlexMessageText.Flex_Faq() };
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble1,bubble2 });
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble1, bubble2 });
                 Log.LogInformation("ルール&FAQ");
             }
             else if (msg.Text.Contains("ルール"))
@@ -145,8 +145,8 @@ namespace FreedomLineBot
                     if (admin_user == ev.Source.UserId)
                     {
                         var db = new Database();
-                        await db.GetMember("SELECT c.newername FROM c Where c.check != null and c.leavedDate = null");
-                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続希望メンバー\n敬称略、順不同\n" + Database.Sentence);
+                        await db.GetMember("SELECT c.newername FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, Database.Sentence);
                         break;
                     }
                 }
@@ -159,8 +159,8 @@ namespace FreedomLineBot
                     if (admin_user == ev.Source.UserId)
                     {
                         var db = new Database();
-                        await db.GetMember("SELECT c.newername FROM c Where c.check = null and c.leavedDate = null");
-                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続未希望メンバー\n敬称略、順不同\n" + Database.Sentence);
+                        await db.GetMember("SELECT c.newername FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, Database.Sentence);
                         break;
                     }
                 }
@@ -172,8 +172,8 @@ namespace FreedomLineBot
                     if (admin_user == ev.Source.UserId)
                     {
                         var db = new Database();
-                        await db.GetFormerMember("SELECT c.name FROM c Where c.check != null and c.leavedDate = null");
-                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続希望メンバー\n敬称略、順不同\n" + Database.Sentence);
+                        await db.GetFormerMember("SELECT c.name FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, Database.Sentence);
                         break;
                     }
                 }
@@ -186,8 +186,8 @@ namespace FreedomLineBot
                     if (admin_user == ev.Source.UserId)
                     {
                         var db = new Database();
-                        await db.GetFormerMember("SELECT c.name FROM c Where c.check = null and c.leavedDate = null");
-                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "継続未希望メンバー\n敬称略、順不同\n" + Database.Sentence);
+                        await db.GetFormerMember("SELECT c.name FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
+                        await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, Database.Sentence);
                         break;
                     }
                 }
