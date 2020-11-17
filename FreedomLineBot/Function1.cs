@@ -24,7 +24,7 @@ namespace FreedomLineBot
                     var LineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN"));
                     var events = await req.GetWebhookEventsAsync(channelSecret);
 
-                    var app = new LineBotApp(LineMessagingClient, log);
+                    var app = new LineBotApp(LineMessagingClient);
 
                     await app.RunAsync(events);
 
