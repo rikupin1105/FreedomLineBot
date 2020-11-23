@@ -67,10 +67,10 @@ namespace FreedomLineBot
         {
             if (ev.Source.Id == GroupID)
             {
-                await LineMessagingClient.PushMessageAsync(ev.Source.Id, "退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください");
-
                 //CosmosDB
                 await db.MemberLeave(ev.Left.Members[0].UserId);
+
+                await LineMessagingClient.PushMessageAsync(ev.Source.Id, "退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください");
             }
         }
         private async void Messaging(MessageEvent ev)
@@ -96,10 +96,9 @@ namespace FreedomLineBot
             else if (msg.Text == "継続希望")
             {
                 var check = await db.MemberCheck(ev.Source.UserId);
-                if (check.already == true)
+                if (!check.already)
                 {
-                    var bubble = new FlexMessage("継続確認") { Contents = FlexMessageText.Flex_Continue_Checked(check.name) };
-                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, $"{check.name}さんの希望を確認しました。");
                 }
             }
             else if (msg.Text == "継続確認イベント" && Admin_Users.Contains(ev.Source.UserId))

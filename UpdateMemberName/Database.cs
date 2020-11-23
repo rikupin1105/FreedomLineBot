@@ -42,7 +42,6 @@ namespace UpdateMemberName
                         log.LogInformation(item.name);
                         log.LogInformation(NewerName);
 
-                        await lineMessagingClient.PushMessageAsync(AdminGroupId, $"名前を変更しました\n入会時名前 {item.name}\n変更前名前 {item.newername}\n変更語名前 {NewerName}");
                         var m = new Member
                         {
                             id = item.id,
@@ -54,6 +53,13 @@ namespace UpdateMemberName
                             leavedDate = item.leavedDate
                         };
                         await container.UpsertItemAsync(m);
+                        try
+                        {
+                            await lineMessagingClient.PushMessageAsync(AdminGroupId, $"名前を変更しました\n入会時名前 {item.name}\n変更前名前 {item.newername}\n変更語名前 {NewerName}");
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
                 }
             } while (iterator.HasMoreResults);

@@ -33,9 +33,9 @@ namespace FreedomLineBot
         public async Task<checkResult> MemberCheck(string Id)
         {
             var responce = await container.ReadItemAsync<Member>(Id, new PartitionKey("freedom"));
-            if (responce.Resource.check == "済")
+            if (responce.Resource.check != null )
             {
-                return new checkResult { already = false };
+                return new checkResult { already = true };
             }
             else
             {
@@ -45,10 +45,10 @@ namespace FreedomLineBot
                     name = responce.Resource.name,
                     newername = responce.Resource.newername,
                     joinedDate = responce.Resource.joinedDate,
-                    check = "済",
+                    check = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd h:mm"),
                     postScript = responce.Resource.postScript
                 });
-                return new checkResult { already = true, name = responce.Resource.newername };
+                return new checkResult { already = false, name = responce.Resource.newername };
             }
         }
         public class checkResult

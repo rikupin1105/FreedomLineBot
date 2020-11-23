@@ -168,24 +168,5 @@ namespace FreedomLineBot
                 }
             };
         }
-        public static BubbleContainer Flex_Continue_Checked(string Name)
-        {
-            return new BubbleContainer()
-            {
-                Size = BubbleSize.kilo,
-                Body = new BoxComponent()
-                {
-                    Layout = BoxLayout.Vertical,
-                    Action = new UriTemplateAction("ルールを見る", "https://rikupin1105.github.io/FreedomSite/Rules"),
-                    Contents = new IFlexComponent[]
-                    {
-                        new TextComponent()
-                        {
-                            Text = $"{Name}さんの継続希望を確認しました。"
-                        }
-                    }
-                }
-            };
-        }
     }
 }
