@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using Line.Messaging;
+using Microsoft.Azure.Cosmos;
 using System;
 using System.Threading.Tasks;
 
@@ -8,10 +9,11 @@ namespace FreedomLineBot
     {
         private readonly string EndpointUri = Environment.GetEnvironmentVariable("CosmosDBEndpointUri");
         private readonly string PrimaryKey = Environment.GetEnvironmentVariable("CosmosDBPrimaryKey");
-        private CosmosClient cosmosClient;
-        private Container container;
         private string databaseId = Environment.GetEnvironmentVariable("CosmosDBId");
         private string containerId = Environment.GetEnvironmentVariable("CosmosDBContainerId");
+        private string GroupId = Environment.GetEnvironmentVariable("GroupId");
+        private CosmosClient cosmosClient;
+        private Container container;
         public Database()
         {
             cosmosClient = new CosmosClient(EndpointUri, PrimaryKey);
@@ -45,7 +47,7 @@ namespace FreedomLineBot
                     name = responce.Resource.name,
                     newername = responce.Resource.newername,
                     joinedDate = responce.Resource.joinedDate,
-                    check = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd h:mm"),
+                    check = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd HH:mm"),
                     postScript = responce.Resource.postScript
                 });
                 return new checkResult { already = false, name = responce.Resource.newername };
@@ -68,7 +70,7 @@ namespace FreedomLineBot
                 joinedDate = responce.Resource.joinedDate,
                 check = responce.Resource.check,
                 postScript = responce.Resource.postScript,
-                leavedDate = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd h:mm")
+                leavedDate = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd HH:mm")
             });
         }
         public async Task MemberAdd(Member m)
@@ -127,6 +129,34 @@ namespace FreedomLineBot
             Sentence = sMember;
         }
         public static string Sentence { get; set; }
+        public async Task UpdateMember()
+        {
+            var lineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN"));
+            var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c WHERE c.leavedDate = null");
+            do
+            {
+                var result = await iterator.ReadNextAsync();
+                foreach (var item in result)
+                {
+                    var user = lineMessagingClient.GetGroupMemberProfileAsync(GroupId, item.id);
+                    var NewerName = user.Result.DisplayName;
 
+                    if (NewerName != item.newername)
+                    {
+                        var m = new Member
+                        {
+                            id = item.id,
+                            name = item.name,
+                            newername = NewerName,
+                            joinedDate = item.joinedDate,
+                            check = item.check,
+                            postScript = item.postScript,
+                            leavedDate = item.leavedDate
+                        };
+                        await container.UpsertItemAsync(m);
+                    }
+                }
+            } while (iterator.HasMoreResults);
+        }
     }
 }

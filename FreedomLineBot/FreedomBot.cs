@@ -12,7 +12,6 @@ namespace FreedomLineBot
 {
     public static class FreedomBot
     {
-
         [FunctionName("FreedomBot")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestMessage req, ILogger log)
         {
