@@ -43,13 +43,6 @@ namespace FreedomLineBot
                         },
                         new TextComponent()
                         {
-                            Text = "BOTの反応は数秒から数十秒遅れることがあります。何度も押す必要はありませんが、数分経っても返答がない場合は再度押していただくか、管理メンバーに連絡してください。",
-                            Wrap = true,
-                            Size = ComponentSize.Sm,
-                            Color = ColorCode.FromRgb(102, 102, 102)
-                        },
-                        new TextComponent()
-                        {
                             Text = "実施期間終了の前日、または前々日に意思表示をされていないメンバーさん宛にメンションをつけて、管理メンバーがGTにてご連絡をします。実施期間終了後、継続を希望しないメンバーさんを、管理メンバーが退会大会に出場させます。ブロック非表示削除等は、各自自由に判断してください。",
                             Wrap = true,
                             Size = ComponentSize.Sm,
@@ -65,7 +58,7 @@ namespace FreedomLineBot
                     {
                         new ButtonComponent()
                         {
-                            Action = new MessageTemplateAction("希望する","継続希望"),
+                            Action = new UriTemplateAction("希望する","https://liff.line.me/1655282180-Le1b0wWq"),
                             Style = ButtonStyle.Primary,
                             Height = ButtonHeight.Sm
                         },
