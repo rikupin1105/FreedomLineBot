@@ -1,8 +1,8 @@
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace FreedomLineBot
 {
@@ -11,10 +11,24 @@ namespace FreedomLineBot
         [FunctionName("ContinueRequest")]
         public static async Task<IActionResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req)
         {
-            string ID = req.Query["ID"];
+            string id = req.Query["ID"];
             var db = new Database();
-            await db.MemberCheck(ID);
-            return new OkObjectResult(ID);
+            try
+            {
+                var check = await db.MemberCheck(id);
+                if (!check.already)
+                {
+                    return new OkObjectResult("åpë±äÛñ]ÇämîFÇµÇ‹ÇµÇΩÅB");
+                }
+                else
+                {
+                    return new OkObjectResult("Ç∑Ç≈Ç…äÛñ]Ç™äÆóπÇµÇƒÇ¢Ç‹Ç∑ÅB");
+                }
+            }
+            catch (System.Exception e)
+            {
+                return new BadRequestObjectResult(e.ToString());
+            }
         }
     }
 }
