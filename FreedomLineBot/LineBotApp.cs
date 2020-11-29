@@ -1,6 +1,5 @@
 ﻿using Line.Messaging;
 using Line.Messaging.Webhooks;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,14 +92,6 @@ namespace FreedomLineBot
                 var bubble = new FlexMessage("FAQ") { Contents = FlexMessageText.Flex_Faq() };
                 await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
             }
-            else if (msg.Text == "継続希望")
-            {
-                var check = await db.MemberCheck(ev.Source.UserId);
-                if (!check.already)
-                {
-                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, $"{check.name}さんの希望を確認しました。");
-                }
-            }
             else if (msg.Text == "継続確認イベント" && Admin_Users.Contains(ev.Source.UserId))
             {
                 var bubble = new FlexMessage("継続確認イベント") { Contents = FlexMessageText.Flex_Check_Continue() };
@@ -155,7 +146,6 @@ namespace FreedomLineBot
 
                     animalMessageList.Add(chickword[rand.Next(0, chickword.Length)]);
                 }
-
                 if (animalMessageList.Count != 0)
                 {
                     var mes = string.Join('\n', animalMessageList);
