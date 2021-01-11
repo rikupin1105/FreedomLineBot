@@ -16,14 +16,7 @@ namespace FreedomLineBot
             try
             {
                 var check = await db.MemberCheck(id);
-                if (!check.already)
-                {
-                    return new OkObjectResult("Œp‘±Šó–]‚ðŠm”F‚µ‚Ü‚µ‚½B");
-                }
-                else
-                {
-                    return new OkObjectResult("‚·‚Å‚ÉŠó–]‚ªŠ®—¹‚µ‚Ä‚¢‚Ü‚·B");
-                }
+                return new OkObjectResult("ã™ã§ã«å¸Œæœ›ãŒå®Œäº†ã—ã¦ã„ã¾ã™ã€‚");
             }
             catch (System.Exception e)
             {
