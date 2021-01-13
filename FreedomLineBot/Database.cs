@@ -19,6 +19,8 @@ namespace FreedomLineBot
             cosmosClient = new CosmosClient(EndpointUri, PrimaryKey);
             container = cosmosClient.GetContainer(databaseId, containerId);
         }
+
+        //再入会であれば True 新規入会であれば False
         public async Task<bool> RejoinCheck(string Id)
         {
             var count = 0;
@@ -32,33 +34,23 @@ namespace FreedomLineBot
             if (count == 0) return false;
             else return true;
         }
-        public async Task<checkResult> MemberCheck(string Id)
+
+        //継続希望を記入する
+        public async Task MemberCheck(string Id)
         {
             var responce = await container.ReadItemAsync<Member>(Id, new PartitionKey("freedom"));
-            if (responce.Resource.check != null )
+            await container.UpsertItemAsync(new Member
             {
-                return new checkResult { already = true };
-            }
-            else
-            {
-                await container.UpsertItemAsync(new Member
-                {
-                    id = Id,
-                    name = responce.Resource.name,
-                    newername = responce.Resource.newername,
-                    joinedDate = responce.Resource.joinedDate,
-                    check = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd HH:mm"),
-                    postScript = responce.Resource.postScript
-                });
-                return new checkResult { already = false, name = responce.Resource.newername };
-            }
-        }
-        public class checkResult
-        {
-            public bool already { get; set; }
-            public string name { get; set; }
+                id = Id,
+                name = responce.Resource.name,
+                newername = responce.Resource.newername,
+                joinedDate = responce.Resource.joinedDate,
+                check = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd HH:mm"),
+                postScript = responce.Resource.postScript
+            });
         }
 
+        //メンバーが退会した際データベースを更新する
         public async Task MemberLeave(string Id)
         {
             var responce = await container.ReadItemAsync<Member>(Id, new PartitionKey("freedom"));
@@ -73,10 +65,14 @@ namespace FreedomLineBot
                 leavedDate = DateTime.UtcNow.AddHours(9).ToString("yyyy/MM/dd HH:mm")
             });
         }
+
+        //入会時にデータベースを更新する
         public async Task MemberAdd(Member m)
         {
             await container.UpsertItemAsync(m);
         }
+
+        //継続希望をリセットする
         public async Task MemberCheckReset()
         {
             var iterator = container.GetItemQueryIterator<Member>("SELECT * FROM c Where c.check != null and c.leavedDate = null");
@@ -98,6 +94,8 @@ namespace FreedomLineBot
                 }
             } while (iterator.HasMoreResults);
         }
+
+        //クエリからメンバーの名前を取得する
         public async Task GetMember(string query)
         {
             var iterator = container.GetItemQueryIterator<Member>(query);
@@ -113,6 +111,8 @@ namespace FreedomLineBot
             } while (iterator.HasMoreResults);
             Sentence = sMember;
         }
+
+        //クエリからメンバーの入会時名前を取得する
         public async Task GetFormerMember(string query)
         {
             var iterator = container.GetItemQueryIterator<Member>(query);
@@ -129,6 +129,8 @@ namespace FreedomLineBot
             Sentence = sMember;
         }
         public static string Sentence { get; set; }
+
+        //メンバーの名前を更新
         public async Task UpdateMember()
         {
             var lineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN"));
