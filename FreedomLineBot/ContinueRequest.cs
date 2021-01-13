@@ -15,8 +15,8 @@ namespace FreedomLineBot
             var db = new Database();
             try
             {
-                var check = await db.MemberCheck(id);
-                return new OkObjectResult("すでに希望が完了しています。");
+                await db.MemberCheck(id);
+                return new OkObjectResult("");
             }
             catch (System.Exception e)
             {
