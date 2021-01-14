@@ -37,8 +37,8 @@ namespace FreedomLineBot
                     break;
             }
         }
-        public MessageSender sender_admin = new MessageSender("管理メンバー");
-        public MessageSender sender_cat = new MessageSender("ぬこ", "https://github.com/rikupin1105/FreedomSite/blob/master/IMG/cat.jpg?raw=true");
+        public MessageSender sender_admin = new MessageSender("管理メンバー", "https://raw.githubusercontent.com/rikupin1105/FreedomSite/master/IMG/admin.jpg");
+        public MessageSender sender_cat = new MessageSender("ぬこ", "https://raw.githubusercontent.com/rikupin1105/FreedomSite/master/IMG/cat.jpg");
         protected override async Task OnMemberJoinAsync(MemberJoinEvent ev)
         {
             if (ev.Source.Id == GroupID)
@@ -102,20 +102,19 @@ namespace FreedomLineBot
                         Contents = FlexMessageText.Flex_Faq()
                     }
                 };
-
-                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text.Contains("ルール"))
             {
                 var messages = new ISendMessage[]
-                   {
+                {
                     new FlexMessage("ルール",sender_admin)
                     {
                         Contents = FlexMessageText.Flex_Rule()
                     }
-                   };
+                };
 
-                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text.Contains("FAQ"))
             {
@@ -127,7 +126,7 @@ namespace FreedomLineBot
                     }
                 };
 
-                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text == "継続確認イベント" && Admin_Users.Contains(ev.Source.UserId))
             {
@@ -138,7 +137,7 @@ namespace FreedomLineBot
                         Contents = FlexMessageText.Flex_Check_Continue()
                     }
                 };
-                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text == "継続確認リセット" && Admin_Users.Contains(ev.Source.UserId))
             {
@@ -147,7 +146,7 @@ namespace FreedomLineBot
                 {
                     new TextMessage("リセットしました",null,sender_admin)
                 };
-                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text == "継続希望メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
@@ -157,7 +156,7 @@ namespace FreedomLineBot
                 {
                     new TextMessage("希望済のメンバー" + Database.Sentence,null,sender_admin)
                 };
-                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text == "継続希望旧メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
@@ -166,7 +165,7 @@ namespace FreedomLineBot
                 {
                     new TextMessage("希望済のメンバー" + Database.Sentence + Database.Sentence,null,sender_admin)
                 };
-                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text == "継続未希望メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
@@ -175,7 +174,7 @@ namespace FreedomLineBot
                 {
                     new TextMessage("未希望のメンバー" + Database.Sentence + Database.Sentence,null,sender_admin)
                 };
-                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text == "継続未希望旧メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
@@ -184,7 +183,7 @@ namespace FreedomLineBot
                 {
                     new TextMessage("未希望のメンバー" + Database.Sentence + Database.Sentence,null,sender_admin)
                 };
-                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else
             {
