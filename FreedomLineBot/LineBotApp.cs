@@ -37,6 +37,8 @@ namespace FreedomLineBot
                     break;
             }
         }
+        public MessageSender sender_admin = new MessageSender("管理メンバー");
+        public MessageSender sender_cat = new MessageSender("ぬこ", "https://github.com/rikupin1105/FreedomSite/blob/master/IMG/cat.jpg?raw=true");
         protected override async Task OnMemberJoinAsync(MemberJoinEvent ev)
         {
             if (ev.Source.Id == GroupID)
@@ -47,8 +49,15 @@ namespace FreedomLineBot
                 if (!await db.RejoinCheck(ev.Joined.Members[0].UserId))
                 {
                     //入会時
-                    var bubble = new FlexMessage("こんにちは") { Contents = FlexMessageText.Flex_Greeting() };
-                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                    var messages = new ISendMessage[]
+                    {
+                        new FlexMessage("こんにちは",sender_admin)
+                        {
+                            Contents = FlexMessageText.Flex_Greeting()
+                        }
+                    };
+
+                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
                 }
 
                 //CosmosDB
@@ -69,7 +78,11 @@ namespace FreedomLineBot
                 //CosmosDB
                 await db.MemberLeave(ev.Left.Members[0].UserId);
 
-                await LineMessagingClient.PushMessageAsync(ev.Source.Id, "退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください");
+                var messages = new ISendMessage[]
+                {
+                    new TextMessage("退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください",null,sender_admin)
+                };
+                await LineMessagingClient.PushMessageAsync(ev.Source.Id, messages);
             }
         }
         private async void Messaging(MessageEvent ev)
@@ -78,49 +91,100 @@ namespace FreedomLineBot
 
             if (msg.Text.Contains("ルール") && msg.Text.Contains("FAQ"))
             {
-                var bubble1 = new FlexMessage("ルール") { Contents = FlexMessageText.Flex_Rule() };
-                var bubble2 = new FlexMessage("FAQ") { Contents = FlexMessageText.Flex_Faq() };
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble1, bubble2 });
+                var messages = new ISendMessage[]
+                {
+                    new FlexMessage("ルール",sender_admin)
+                    {
+                        Contents = FlexMessageText.Flex_Rule()
+                    },
+                    new FlexMessage("FAQ",sender_admin)
+                    {
+                        Contents = FlexMessageText.Flex_Faq()
+                    }
+                };
+
+                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
             }
             else if (msg.Text.Contains("ルール"))
             {
-                var bubble = new FlexMessage("ルール") { Contents = FlexMessageText.Flex_Rule() };
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                var messages = new ISendMessage[]
+                   {
+                    new FlexMessage("ルール",sender_admin)
+                    {
+                        Contents = FlexMessageText.Flex_Rule()
+                    }
+                   };
+
+                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
             }
             else if (msg.Text.Contains("FAQ"))
             {
-                var bubble = new FlexMessage("FAQ") { Contents = FlexMessageText.Flex_Faq() };
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                var messages = new ISendMessage[]
+                {
+                    new FlexMessage("FAQ",sender_admin)
+                    {
+                        Contents = FlexMessageText.Flex_Faq()
+                    }
+                };
+
+                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
             }
             else if (msg.Text == "継続確認イベント" && Admin_Users.Contains(ev.Source.UserId))
             {
-                var bubble = new FlexMessage("継続確認イベント") { Contents = FlexMessageText.Flex_Check_Continue() };
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, new FlexMessage[] { bubble });
+                var messages = new ISendMessage[]
+                {
+                    new FlexMessage("継続確認イベント",sender_admin)
+                    {
+                        Contents = FlexMessageText.Flex_Check_Continue()
+                    }
+                };
+                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
             }
             else if (msg.Text == "継続確認リセット" && Admin_Users.Contains(ev.Source.UserId))
             {
                 await db.MemberCheckReset();
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, $"リセットしました");
+                var messages = new ISendMessage[]
+                {
+                    new TextMessage("リセットしました",null,sender_admin)
+                };
+                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
             }
             else if (msg.Text == "継続希望メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
                 await db.GetMember("SELECT c.newername FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "希望済のメンバー" + Database.Sentence);
+
+                var messages = new ISendMessage[]
+                {
+                    new TextMessage("希望済のメンバー" + Database.Sentence,null,sender_admin)
+                };
+                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
             }
             else if (msg.Text == "継続希望旧メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
                 await db.GetFormerMember("SELECT c.name FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "希望済のメンバー" + Database.Sentence);
+                var messages = new ISendMessage[]
+                {
+                    new TextMessage("希望済のメンバー" + Database.Sentence + Database.Sentence,null,sender_admin)
+                };
+                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
             }
             else if (msg.Text == "継続未希望メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
                 await db.GetMember("SELECT c.newername FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "未希望のメンバー" + Database.Sentence);
+                var messages = new ISendMessage[]
+                {
+                    new TextMessage("未希望のメンバー" + Database.Sentence + Database.Sentence,null,sender_admin)
+                };
+                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
             }
             else if (msg.Text == "継続未希望旧メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
                 await db.GetFormerMember("SELECT c.name FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
-                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, "未希望のメンバー" + Database.Sentence);
+                var messages = new ISendMessage[]
+                {
+                    new TextMessage("未希望のメンバー" + Database.Sentence + Database.Sentence,null,sender_admin)
+                };
+                await LineMessagingClient.ReplyMessageAsync(ev.Source.Id, messages);
             }
             else
             {
@@ -130,26 +194,12 @@ namespace FreedomLineBot
                     var rand = new Random();
                     var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)?", "ฅ(=✧ω✧=)ฅﾆｬﾆｬｰﾝ✧", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん", "ฅ(๑•̀ω•́๑)ฅﾆｬﾝﾆｬﾝｶﾞｵｰ", "ﾐｬｰ♪ヽ(∇⌒= )( =⌒∇)ﾉﾐｬｰ♪", "=^∇^*=　にゃお～ん♪" };
 
-                    animalMessageList.Add(catword[rand.Next(0, catword.Length)]);
-                }
-                if (msg.Text.Contains("わん") || msg.Text.Contains("ワン"))
-                {
-                    var rand = new Random();
-                    var dogword = new string[] { "ﾜﾝ(▼・ᴥ・▼)", "ﾜﾝ(U・ᴥ・U)", "ﾜﾝﾜﾝ(υ´•ﻌ•`υ)", "ﾜﾝ(U ･ㅊ･ U)?", "(U ･ˑ̫･ U)ﾜﾝ" };
+                    var messages = new ISendMessage[]
+                    {
+                        new TextMessage(catword[rand.Next(0, catword.Length)], null, sender_cat)
+                    };
 
-                    animalMessageList.Add(dogword[rand.Next(0, dogword.Length)]);
-                }
-                if (msg.Text.Contains("ぴよ") || msg.Text.Contains("ピヨ"))
-                {
-                    var rand = new Random();
-                    var chickword = new string[] { "ﾋﾟﾖ(•ө•)", "(ё) ピヨピヨ♪", "(ё)(ё)(ё) ピヨピヨ♪", "ﾄ(･Θ･)ﾋﾟﾖﾋﾟﾖ♪", "(*・Θ・*)ﾋﾟﾖｯ" };
-
-                    animalMessageList.Add(chickword[rand.Next(0, chickword.Length)]);
-                }
-                if (animalMessageList.Count != 0)
-                {
-                    var mes = string.Join('\n', animalMessageList);
-                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, mes);
+                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
                 }
             }
         }
