@@ -25,7 +25,7 @@ namespace FreedomLineBot
             switch (ev.Message.Type)
             {
                 case EventMessageType.Text:
-                    Messaging(ev);
+                    await Messaging(ev);
                     break;
 
                 case EventMessageType.Image:
@@ -38,7 +38,7 @@ namespace FreedomLineBot
             }
         }
         public MessageSender sender_admin = new MessageSender("管理メンバー", "https://raw.githubusercontent.com/rikupin1105/FreedomSite/master/IMG/admin.jpg");
-        public MessageSender sender_cat = new MessageSender("ぬこ", "https://raw.githubusercontent.com/rikupin1105/FreedomSite/master/IMG/cat.jpg");
+        public MessageSender sender_cat = new MessageSender("ฅ(=✧ω✧=)ฅﾆｬﾆｬｰﾝ✧", "https://raw.githubusercontent.com/rikupin1105/FreedomSite/master/IMG/cat.jpg");
         protected override async Task OnMemberJoinAsync(MemberJoinEvent ev)
         {
             if (ev.Source.Id == GroupID)
@@ -85,7 +85,8 @@ namespace FreedomLineBot
                 await LineMessagingClient.PushMessageAsync(ev.Source.Id, messages);
             }
         }
-        private async void Messaging(MessageEvent ev)
+        private async         Task
+Messaging(MessageEvent ev)
         {
             if (!(ev.Message is TextEventMessage msg)) { return; }
 
@@ -187,7 +188,6 @@ namespace FreedomLineBot
             }
             else
             {
-                var animalMessageList = new List<string>();
                 if (msg.Text.Contains("にゃ") || msg.Text.Contains("ニャ"))
                 {
                     var rand = new Random();
@@ -197,7 +197,6 @@ namespace FreedomLineBot
                     {
                         new TextMessage(catword[rand.Next(0, catword.Length)], null, sender_cat)
                     };
-
                     await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
                 }
             }
