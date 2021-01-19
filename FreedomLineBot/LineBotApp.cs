@@ -46,19 +46,16 @@ namespace FreedomLineBot
                 await db.GetMember($"SELECT c FROM c Where c.id = \"{ev.Joined.Members[0].UserId}\"");
                 var User_Name = LineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Joined.Members[0].UserId);
 
-                if (!await db.RejoinCheck(ev.Joined.Members[0].UserId))
+                //入会時
+                var messages = new ISendMessage[]
                 {
-                    //入会時
-                    var messages = new ISendMessage[]
+                    new FlexMessage("こんにちは",sender_admin)
                     {
-                        new FlexMessage("こんにちは",sender_admin)
-                        {
-                            Contents = FlexMessageText.Flex_Greeting()
-                        }
-                    };
+                        Contents = FlexMessageText.Flex_Greeting()
+                    }
+                };
 
-                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
-                }
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
 
                 //CosmosDB
                 await db.MemberAdd(new Member
@@ -85,8 +82,7 @@ namespace FreedomLineBot
                 await LineMessagingClient.PushMessageAsync(ev.Source.Id, messages);
             }
         }
-        private async         Task
-Messaging(MessageEvent ev)
+        private async Task Messaging(MessageEvent ev)
         {
             if (!(ev.Message is TextEventMessage msg)) { return; }
 
@@ -191,11 +187,15 @@ Messaging(MessageEvent ev)
                 if (msg.Text.Contains("にゃ") || msg.Text.Contains("ニャ"))
                 {
                     var rand = new Random();
-                    var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)?", "ฅ(=✧ω✧=)ฅﾆｬﾆｬｰﾝ✧", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん", "ฅ(๑•̀ω•́๑)ฅﾆｬﾝﾆｬﾝｶﾞｵｰ", "ﾐｬｰ♪ヽ(∇⌒= )( =⌒∇)ﾉﾐｬｰ♪", "=^∇^*=　にゃお～ん♪" };
-
+                    var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん", "ฅ(๑•̀ω•́๑)ฅﾆｬﾝﾆｬﾝｶﾞｵｰ", "ﾐｬｰ♪ヽ(∇⌒= )( =⌒∇)ﾉﾐｬｰ♪", "=^∇^*=　にゃお～ん♪" };
+                    var mes = catword[rand.Next(0, catword.Length)];
+                    if (catword.Contains("?"))
+                    {
+                        mes = mes + "?";
+                    }
                     var messages = new ISendMessage[]
                     {
-                        new TextMessage(catword[rand.Next(0, catword.Length)], null, sender_cat)
+                        new TextMessage(mes, null, sender_cat)
                     };
                     await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
                 }
