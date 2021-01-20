@@ -1,6 +1,7 @@
 ﻿using Line.Messaging;
 using Microsoft.Azure.Cosmos;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FreedomLineBot
@@ -18,21 +19,6 @@ namespace FreedomLineBot
         {
             cosmosClient = new CosmosClient(EndpointUri, PrimaryKey);
             container = cosmosClient.GetContainer(databaseId, containerId);
-        }
-
-        //再入会であれば True 新規入会であれば False
-        public async Task<bool> RejoinCheck(string Id)
-        {
-            var count = 0;
-            var iterator = container.GetItemQueryIterator<Member>($"SELECT * FROM c WHERE c.id = \"{Id}\"");
-            do
-            {
-                await iterator.ReadNextAsync();
-                count++;
-            } while (iterator.HasMoreResults);
-
-            if (count == 0) return false;
-            else return true;
         }
 
         //継続希望を記入する
@@ -96,39 +82,20 @@ namespace FreedomLineBot
         }
 
         //クエリからメンバーの名前を取得する
-        public async Task GetMember(string query)
+        public async Task<List<Member>> GetMember(string query)
         {
+            var member_list = new List<Member>();
             var iterator = container.GetItemQueryIterator<Member>(query);
-            var sMember = "";
             do
             {
                 var result = await iterator.ReadNextAsync();
-
                 foreach (var item in result)
                 {
-                    sMember += "\n" + item.newername;
+                    member_list.Add(item);
                 }
             } while (iterator.HasMoreResults);
-            Sentence = sMember;
+            return member_list;
         }
-
-        //クエリからメンバーの入会時名前を取得する
-        public async Task GetFormerMember(string query)
-        {
-            var iterator = container.GetItemQueryIterator<Member>(query);
-            var sMember = "";
-            do
-            {
-                var result = await iterator.ReadNextAsync();
-
-                foreach (var item in result)
-                {
-                    sMember += "\n" + item.name;
-                }
-            } while (iterator.HasMoreResults);
-            Sentence = sMember;
-        }
-        public static string Sentence { get; set; }
 
         //メンバーの名前を更新
         public async Task UpdateMember()
