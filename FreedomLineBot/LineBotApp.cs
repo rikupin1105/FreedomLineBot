@@ -164,7 +164,7 @@ namespace FreedomLineBot
                 string member = "希望済のメンバー";
                 foreach (var item in member_list)
                 {
-                    member += "\n" + item.newername;
+                    member += "\n" + item.name;
                 }
                 var messages = new ISendMessage[]
                 {
