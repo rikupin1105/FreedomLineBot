@@ -43,7 +43,6 @@ namespace FreedomLineBot
         {
             if (ev.Source.Id == GroupID)
             {
-                await db.GetMember($"SELECT c FROM c Where c.id = \"{ev.Joined.Members[0].UserId}\"");
                 var User_Name = LineMessagingClient.GetGroupMemberProfileAsync(ev.Source.Id, ev.Joined.Members[0].UserId);
 
                 //入会時
@@ -147,58 +146,69 @@ namespace FreedomLineBot
             }
             else if (msg.Text == "継続希望メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
-                await db.GetMember("SELECT c.newername FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
-
+                var member_list = await db.GetMember("SELECT c.newername FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
+                string member = "希望済のメンバー";
+                foreach (var item in member_list)
+                {
+                    member += "\n" + item.newername;
+                }
                 var messages = new ISendMessage[]
                 {
-                    new TextMessage("希望済のメンバー" + Database.Sentence,null,sender_admin)
+                    new TextMessage(member, null, sender_admin)
                 };
                 await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text == "継続希望旧メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
-                await db.GetFormerMember("SELECT c.name FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
+                var member_list = await db.GetMember("SELECT c.name FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
+                string member = "希望済のメンバー";
+                foreach (var item in member_list)
+                {
+                    member += "\n" + item.newername;
+                }
                 var messages = new ISendMessage[]
                 {
-                    new TextMessage("希望済のメンバー" + Database.Sentence + Database.Sentence,null,sender_admin)
+                    new TextMessage(member,null,sender_admin)
                 };
                 await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text == "継続未希望メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
-                await db.GetMember("SELECT c.newername FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
+                var member_list = await db.GetMember("SELECT c.newername FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
+                string member = "未希望のメンバー";
+                foreach (var item in member_list)
+                {
+                    member += "\n" + item.newername;
+                }
                 var messages = new ISendMessage[]
                 {
-                    new TextMessage("未希望のメンバー" + Database.Sentence + Database.Sentence,null,sender_admin)
+                    new TextMessage(member, null, sender_admin)
                 };
                 await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
             else if (msg.Text == "継続未希望旧メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
-                await db.GetFormerMember("SELECT c.name FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
+                var member_list = await db.GetMember("SELECT c.name FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
+                string member = "未希望のメンバー";
+                foreach (var item in member_list)
+                {
+                    member += "\n" + item.name;
+                }
                 var messages = new ISendMessage[]
                 {
-                    new TextMessage("未希望のメンバー" + Database.Sentence + Database.Sentence,null,sender_admin)
+                    new TextMessage(member, null, sender_admin)
                 };
                 await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
-            else
+            else if (msg.Text.Contains("にゃ") || msg.Text.Contains("ニャ"))
             {
-                if (msg.Text.Contains("にゃ") || msg.Text.Contains("ニャ"))
+                var rand = new Random();
+                var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん", "ฅ(๑•̀ω•́๑)ฅﾆｬﾝﾆｬﾝｶﾞｵｰ", "ﾐｬｰ♪ヽ(∇⌒= )( =⌒∇)ﾉﾐｬｰ♪", "=^∇^*=　にゃお～ん♪" };
+                var messages = new ISendMessage[]
                 {
-                    var rand = new Random();
-                    var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん", "ฅ(๑•̀ω•́๑)ฅﾆｬﾝﾆｬﾝｶﾞｵｰ", "ﾐｬｰ♪ヽ(∇⌒= )( =⌒∇)ﾉﾐｬｰ♪", "=^∇^*=　にゃお～ん♪" };
-                    var mes = catword[rand.Next(0, catword.Length)];
-                    if (catword.Contains("?"))
-                    {
-                        mes = mes + "?";
-                    }
-                    var messages = new ISendMessage[]
-                    {
-                        new TextMessage(mes, null, sender_cat)
-                    };
-                    await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
-                }
+                    new TextMessage(catword[rand.Next(0, catword.Length)], null, sender_cat)
+                };
+                await LineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
         }
 
