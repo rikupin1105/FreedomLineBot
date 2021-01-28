@@ -23,7 +23,7 @@ namespace FreedomLineBot
                 await db.MemberCheck(id);
                 var mes = new ISendMessage[]
                 {
-                    new TextMessage("Œp‘±Šó–]‚ðŠm”F‚µ‚Ü‚µ‚½")
+                    new TextMessage("Œp‘±Šó–]‚ðŠm”F‚µ‚Ü‚µ‚½ Thank you",null,sender_admin)
                 };
                 await lineMessagingClient.PushMessageAsync(id, mes);
                 return new OkObjectResult("");
