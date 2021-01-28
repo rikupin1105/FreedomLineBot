@@ -209,6 +209,10 @@ namespace FreedomLineBot
                 };
                 await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
+            else if(msg.Text == "プッシュ")
+            {
+                await lineMessagingClient.PushMessageAsync(ev.Source.UserId, "継続希望を確認しました！");
+            }
         }
     }
 }
