@@ -5,7 +5,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using System;
 using System.Threading.Tasks;
-using static FreedomLineBot.Freedom;
 
 namespace FreedomLineBot
 {
@@ -19,6 +18,7 @@ namespace FreedomLineBot
             try
             {
                 await db.MemberCheck(id);
+                await new LineBotApp().ContinueVerification(id);
                 return new OkObjectResult("");
             }
             catch (Exception e)

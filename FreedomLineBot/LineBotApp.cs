@@ -9,9 +9,9 @@ namespace FreedomLineBot
     class LineBotApp : WebhookApplication
     {
         private LineMessagingClient lineMessagingClient { get; set; }
-        public LineBotApp(LineMessagingClient LineMessagingClient)
+        public LineBotApp()
         {
-            lineMessagingClient = LineMessagingClient;
+            lineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN")); ;
             database = new Database();
         }
         protected override async Task OnMessageAsync(MessageEvent ev)
@@ -78,6 +78,14 @@ namespace FreedomLineBot
                 await lineMessagingClient.PushMessageAsync(ev.Left.Members[0].UserId, mes1);
                 await lineMessagingClient.PushMessageAsync(Environment.GetEnvironmentVariable("ADMIN_GROUP"), mes2);
             }
+        }
+        public async Task ContinueVerification(string Id)
+        {
+            var mes = new ISendMessage[]
+            {
+                new TextMessage("継続希望を確認しました",null,sender_admin)
+            };
+            await lineMessagingClient.PushMessageAsync(Id, mes);
         }
         private async Task Messaging(MessageEvent ev)
         {
