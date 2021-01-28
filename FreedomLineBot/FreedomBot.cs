@@ -7,6 +7,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using static FreedomLineBot.Freedom;
 
 namespace FreedomLineBot
 {
@@ -20,10 +21,10 @@ namespace FreedomLineBot
                 {
                     log.LogInformation(req.Content.ReadAsStringAsync().Result);
                     var channelSecret = Environment.GetEnvironmentVariable("CHANNEL_SEACRET");
-                    var LineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN"));
+                    lineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN"));
                     var events = await req.GetWebhookEventsAsync(channelSecret);
 
-                    var app = new LineBotApp(LineMessagingClient);
+                    var app = new LineBotApp(lineMessagingClient);
 
                     await app.RunAsync(events);
 
