@@ -14,18 +14,11 @@ namespace FreedomLineBot
         [FunctionName("ContinueRequest")]
         public static async Task<IActionResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req)
         {
-            var lineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN"));
-
             string id = req.Query["ID"];
             var db = new Database();
             try
             {
                 await db.MemberCheck(id);
-                var mes = new ISendMessage[]
-                {
-                    new TextMessage("Œp‘±Šó–]‚ðŠm”F‚µ‚Ü‚µ‚½ Thank you",null,sender_admin)
-                };
-                await lineMessagingClient.PushMessageAsync(Admin_Users[0], mes);
                 return new OkObjectResult("");
             }
             catch (Exception e)
