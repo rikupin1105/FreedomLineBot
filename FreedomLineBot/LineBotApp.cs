@@ -74,11 +74,8 @@ namespace FreedomLineBot
                 //CosmosDB
                 await db.MemberLeave(ev.Left.Members[0].UserId);
 
-                var messages = new ISendMessage[]
-                {
-                    new TextMessage("退会されました。ブロック削除は個人の判断でお願いします。\n連絡先を貼ってください",null,sender_admin)
-                };
-                await LineMessagingClient.PushMessageAsync(ev.Source.Id, messages);
+                await LineMessagingClient.PushMessageAsync(ev.Left.Members[0].UserId, "グループに参加していただきありがとうございました。このBOTはブロック削除をしてください。");
+                await LineMessagingClient.PushMessageAsync(Environment.GetEnvironmentVariable("ADMIN_GROUP"), "誰かが退会しました");
             }
         }
         private async Task Messaging(MessageEvent ev)
