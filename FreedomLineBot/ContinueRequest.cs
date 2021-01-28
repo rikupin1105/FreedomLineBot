@@ -25,7 +25,7 @@ namespace FreedomLineBot
                 {
                     new TextMessage("Œp‘±Šó–]‚ðŠm”F‚µ‚Ü‚µ‚½ Thank you",null,sender_admin)
                 };
-                await lineMessagingClient.PushMessageAsync(id, mes);
+                await lineMessagingClient.PushMessageAsync(Admin_Users[0], mes);
                 return new OkObjectResult("");
             }
             catch (Exception e)
