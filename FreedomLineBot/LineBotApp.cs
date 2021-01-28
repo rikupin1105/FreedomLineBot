@@ -1,8 +1,6 @@
 ﻿using Line.Messaging;
 using Line.Messaging.Webhooks;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using static FreedomLineBot.Freedom;
 
@@ -10,6 +8,7 @@ namespace FreedomLineBot
 {
     class LineBotApp : WebhookApplication
     {
+        private LineMessagingClient lineMessagingClient { get; set; }
         public LineBotApp(LineMessagingClient LineMessagingClient)
         {
             lineMessagingClient = LineMessagingClient;
@@ -209,7 +208,7 @@ namespace FreedomLineBot
                 };
                 await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
-            else if(msg.Text == "プッシュ")
+            else if (msg.Text == "プッシュ")
             {
                 await lineMessagingClient.PushMessageAsync(ev.Source.UserId, "継続希望を確認しました！");
             }
