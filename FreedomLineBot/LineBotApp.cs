@@ -1,12 +1,13 @@
 ﻿using Line.Messaging;
 using Line.Messaging.Webhooks;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using static FreedomLineBot.Freedom;
 
 namespace FreedomLineBot
 {
-    class LineBotApp : WebhookApplication
+    internal class LineBotApp : WebhookApplication
     {
         private LineMessagingClient lineMessagingClient { get; set; }
         public LineBotApp()
@@ -191,6 +192,18 @@ namespace FreedomLineBot
                 var rand = new Random();
                 var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん", "ฅ(๑•̀ω•́๑)ฅﾆｬﾝﾆｬﾝｶﾞｵｰ", "ﾐｬｰ♪ヽ(∇⌒= )( =⌒∇)ﾉﾐｬｰ♪", "=^∇^*=　にゃお～ん♪" };
                 await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, catword[rand.Next(0, catword.Length)], false, null, sender_cat);
+            }
+            else if (msg.Text == "Google")
+            {
+                var action = new UriTemplateAction("google", "https://google.com");
+                var qr = new QuickReply()
+                {
+                    Items = new List<QuickReplyButtonObject>()
+                    {
+                        new QuickReplyButtonObject(action)
+                    }
+                };
+                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, "hello", false, qr);
             }
         }
     }
