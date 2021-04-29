@@ -1,5 +1,5 @@
-﻿using Line.Messaging;
-using Line.Messaging.Webhooks;
+﻿using LineMessagingAPI;
+using LineMessagingAPI.Webhooks;
 using System;
 using System.Threading.Tasks;
 using static FreedomLineBot.Freedom;
@@ -41,10 +41,7 @@ namespace FreedomLineBot
                 //入会時
                 var messages = new ISendMessage[]
                 {
-                    new FlexMessage("こんにちは",sender_admin)
-                    {
-                        Contents = FlexMessageText.Flex_Greeting()
-                    }
+                    new FlexMessage("こんにちは",FlexMessageText.Flex_Greeting(),null,sender_admin)
                 };
 
                 await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
@@ -95,14 +92,8 @@ namespace FreedomLineBot
             {
                 var messages = new ISendMessage[]
                 {
-                    new FlexMessage("ルール",sender_admin)
-                    {
-                        Contents = FlexMessageText.Flex_Rule()
-                    },
-                    new FlexMessage("FAQ",sender_admin)
-                    {
-                        Contents = FlexMessageText.Flex_Faq()
-                    }
+                    new FlexMessage("ルール",FlexMessageText.Flex_Rule(),null,sender_admin),
+                    new FlexMessage("FAQ",FlexMessageText.Flex_Faq(),null,sender_admin)
                 };
                 await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }
@@ -110,10 +101,7 @@ namespace FreedomLineBot
             {
                 var messages = new ISendMessage[]
                 {
-                    new FlexMessage("ルール",sender_admin)
-                    {
-                        Contents = FlexMessageText.Flex_Rule()
-                    }
+                    new FlexMessage("ルール",FlexMessageText.Flex_Rule(),null,sender_admin)
                 };
 
                 await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
@@ -122,10 +110,7 @@ namespace FreedomLineBot
             {
                 var messages = new ISendMessage[]
                 {
-                    new FlexMessage("FAQ",sender_admin)
-                    {
-                        Contents = FlexMessageText.Flex_Faq()
-                    }
+                    new FlexMessage("FAQ",FlexMessageText.Flex_Faq(),null,sender_admin)
                 };
 
                 await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
@@ -134,10 +119,7 @@ namespace FreedomLineBot
             {
                 var messages = new ISendMessage[]
                 {
-                    new FlexMessage("継続確認イベント",sender_admin)
-                    {
-                        Contents = FlexMessageText.Flex_Check_Continue()
-                    }
+                    new FlexMessage("継続確認イベント",FlexMessageText.Flex_Check_Continue(),null,sender_admin)
                 };
                 await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
             }

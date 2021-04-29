@@ -1,4 +1,4 @@
-using Line.Messaging;
+using LineMessagingAPI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;

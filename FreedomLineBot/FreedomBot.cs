@@ -1,5 +1,5 @@
-using Line.Messaging;
-using Line.Messaging.Webhooks;
+using LineMessagingAPI;
+using LineMessagingAPI.Webhooks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;

@@ -1,4 +1,4 @@
-﻿using Line.Messaging;
+﻿using LineMessagingAPI;
 
 namespace FreedomLineBot
 {    
