@@ -12,8 +12,8 @@ namespace FreedomLineBot
         private LineMessagingClient lineMessagingClient { get; set; }
         public LineBotApp()
         {
-            lineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN")); ;
-            database = new Database();
+            lineMessagingClient = new LineMessagingClient(Environment.GetEnvironmentVariable("CHANNEL_ACCESS_TOKEN"));
+            Freedom.Database = new Database();
         }
         protected override async Task OnMessageAsync(MessageEvent ev)
         {
@@ -48,7 +48,7 @@ namespace FreedomLineBot
                 await lineMessagingClient.ReplyMessageAsync(ev.ReplyToken, messages);
 
                 //CosmosDB
-                await database.MemberAdd(new Member
+                await Freedom.Database.MemberAdd(new Member
                 {
                     id = ev.Joined.Members[0].UserId,
                     name = User_Name.Result.DisplayName,
@@ -63,14 +63,14 @@ namespace FreedomLineBot
             if (ev.Source.Id == groupId)
             {
                 //CosmosDB
-                await database.MemberLeave(ev.Left.Members[0].UserId);
+                await Freedom.Database.MemberLeave(ev.Left.Members[0].UserId);
                 var mes1 = new ISendMessage[]
                 {
-                    new TextMessage("グループに参加していただきありがとうございました。このBOTはブロック削除をしてください。",null,sender_admin)
+                    new TextMessage("グループに参加していただきありがとうございました。このBOTはブロック削除をしてください。",null,null,sender_admin)
                 };
                 var mes2 = new ISendMessage[]
                 {
-                    new TextMessage("誰かが退会しました",null,sender_admin)
+                    new TextMessage("誰かが退会しました",null,null,sender_admin)
                 };
 
                 await lineMessagingClient.PushMessageAsync(ev.Left.Members[0].UserId, mes1);
@@ -81,7 +81,7 @@ namespace FreedomLineBot
         {
             var mes = new ISendMessage[]
             {
-                new TextMessage("継続希望を確認しました",null,sender_admin)
+                new TextMessage("継続希望を確認しました",null,null,sender_admin)
             };
             await lineMessagingClient.PushMessageAsync(Id, mes);
         }
@@ -126,54 +126,54 @@ namespace FreedomLineBot
             }
             else if (msg.Text == "継続確認リセット" && Admin_Users.Contains(ev.Source.UserId))
             {
-                await database.MemberCheckReset();
-                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, "リセットしました", false, null, sender_admin);
+                await Freedom.Database.MemberCheckReset();
+                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, "リセットしました", null, false, null, sender_admin);
             }
             else if (msg.Text == "継続希望メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
-                var member_list = await database.GetMember("SELECT c.newername FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
+                var member_list = await Freedom.Database.GetMember("SELECT c.newername FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
                 string member = "希望済のメンバー";
                 foreach (var item in member_list)
                 {
                     member += "\n" + item.newername;
                 }
-                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, member, false, null, sender_admin);
+                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, member, null, false, null, sender_admin);
             }
             else if (msg.Text == "継続希望旧メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
-                var member_list = await database.GetMember("SELECT c.name FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
+                var member_list = await Freedom.Database.GetMember("SELECT c.name FROM c Where c.check != null and c.leavedDate = null ORDER BY c.joinedDate");
                 string member = "希望済のメンバー";
                 foreach (var item in member_list)
                 {
                     member += "\n" + item.name;
                 }
-                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, member, false, null, sender_admin);
+                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, member, null, false, null, sender_admin);
             }
             else if (msg.Text == "継続未希望メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
-                var member_list = await database.GetMember("SELECT c.newername FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
+                var member_list = await Freedom.Database.GetMember("SELECT c.newername FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
                 string member = "未希望のメンバー";
                 foreach (var item in member_list)
                 {
                     member += "\n" + item.newername;
                 }
-                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, member, false, null, sender_admin);
+                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, member, null, false, null, sender_admin);
             }
             else if (msg.Text == "継続未希望旧メンバー" && Admin_Users.Contains(ev.Source.UserId))
             {
-                var member_list = await database.GetMember("SELECT c.name FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
+                var member_list = await Freedom.Database.GetMember("SELECT c.name FROM c Where c.check = null and c.leavedDate = null ORDER BY c.joinedDate");
                 string member = "未希望のメンバー";
                 foreach (var item in member_list)
                 {
                     member += "\n" + item.name;
                 }
-                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, member, false, null, sender_admin);
+                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, member, null, false, null, sender_admin);
             }
             else if (msg.Text.Contains("にゃ") || msg.Text.Contains("ニャ"))
             {
                 var rand = new Random();
                 var catword = new string[] { "にゃฅ(｡•ㅅ•｡ฅ)", "(=ﾟ-ﾟ)ﾉﾆｬｰﾝ♪", "(=´∇｀=)にゃん", "ฅ(๑•̀ω•́๑)ฅﾆｬﾝﾆｬﾝｶﾞｵｰ", "ﾐｬｰ♪ヽ(∇⌒= )( =⌒∇)ﾉﾐｬｰ♪", "=^∇^*=　にゃお～ん♪" };
-                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, catword[rand.Next(0, catword.Length)], false, null, sender_cat);
+                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, catword[rand.Next(0, catword.Length)], null, false, null, sender_cat);
             }
             else if (msg.Text == "Google")
             {
@@ -185,7 +185,7 @@ namespace FreedomLineBot
                         new QuickReplyButtonObject(action)
                     }
                 };
-                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, "hello", false, qr);
+                await lineMessagingClient.ReplyTextAsync(ev.ReplyToken, "hello", null, false, qr);
             }
         }
     }
